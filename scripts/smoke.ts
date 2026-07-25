@@ -1,10 +1,10 @@
 import { includedProblems } from "../src/shared/problems";
 import { runSubmission } from "../src/server/runner";
 
-const pairSum = includedProblems[0];
+const twoSum = includedProblems[0];
 
 const pythonCode = `class Solution:
-    def pairSum(self, nums, target):
+    def twoSum(self, nums, target):
         seen = {}
         for index, value in enumerate(nums):
             need = target - value
@@ -15,7 +15,7 @@ const pythonCode = `class Solution:
 
 const cppCode = `class Solution {
 public:
-    vector<int> pairSum(vector<int> nums, int target) {
+    vector<int> twoSum(vector<int> nums, int target) {
         unordered_map<int, int> seen;
         for (int index = 0; index < static_cast<int>(nums.size()); index++) {
             int need = target - nums[index];
@@ -28,8 +28,8 @@ public:
 `;
 
 async function main(): Promise<void> {
-  const python = await runSubmission({ language: "python", code: pythonCode, problem: pairSum });
-  const cpp = await runSubmission({ language: "cpp", code: cppCode, problem: pairSum });
+  const python = await runSubmission({ language: "python", code: pythonCode, problem: twoSum });
+  const cpp = await runSubmission({ language: "cpp", code: cppCode, problem: twoSum });
 
   const pythonOk = python.ok && python.results.every((result) => result.passed);
   const cppOk = cpp.ok && cpp.results.every((result) => result.passed);
