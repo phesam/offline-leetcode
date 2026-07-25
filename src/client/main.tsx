@@ -26,6 +26,8 @@ const SOLUTIONS_KEY = "aircode.solutions.v1";
 const MODEL_KEY = "aircode.ollamaModel.v1";
 const API_OFFLINE_MESSAGE =
   "Local API is not running. From the repo, run `npm run dev`, then open http://127.0.0.1:5173. For the built app, run `npm run build && npm run start`, then open http://127.0.0.1:4174.";
+const SUBMIT_PROMPT =
+  "Treat this as a final submission review. First use the latest local test result. Then inspect my code for correctness, complexity, missed edge cases, and whether the algorithm would pass broad hidden-style tests for this problem. Give me a clear verdict: PASS, FAIL, or UNSURE. If it fails or is unsure, give one concrete counterexample or the smallest next fix. Do not invent LeetCode-only hidden tests.";
 
 interface Health {
   runner: { python: string; cpp: string };
@@ -165,6 +167,7 @@ function App(): React.ReactElement {
   const [messages, setMessages] = React.useState<ChatMessage[]>([]);
   const [question, setQuestion] = React.useState("hint?");
   const [isAsking, setIsAsking] = React.useState(false);
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [draft, setDraft] = React.useState<ProblemDraft>(emptyDraft);
   const [showAddProblem, setShowAddProblem] = React.useState(false);
   const [pastedProblemText, setPastedProblemText] = React.useState("");
@@ -251,35 +254,43 @@ function App(): React.ReactElement {
     }
   }
 
+  async function executeRun(): Promise<RunResponse> {
+    return apiJson<RunResponse>("/api/run", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ language, code, problem: selectedProblem })
+    });
+  }
+
+  function showRunError(error: unknown): void {
+    const message = error instanceof Error ? error.message : "Could not reach the local runner.";
+    setRunResult({
+      ok: false,
+      stderr: message,
+      results: [],
+      durationMs: 0
+    });
+    setNotice(message);
+  }
+
   async function runTests(): Promise<void> {
     setIsRunning(true);
     setNotice("");
     try {
-      const payload = await apiJson<RunResponse>("/api/run", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ language, code, problem: selectedProblem })
-      });
-      setRunResult(payload);
+      setRunResult(await executeRun());
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Could not reach the local runner.";
-      setRunResult({
-        ok: false,
-        stderr: message,
-        results: [],
-        durationMs: 0
-      });
-      setNotice(message);
+      showRunError(error);
     } finally {
       setIsRunning(false);
     }
   }
 
-  async function askAi(prompt = question): Promise<void> {
+  async function askAi(prompt = question, resultForPrompt = runResult, displayPrompt = prompt): Promise<void> {
     if (!prompt.trim()) return;
     setIsAsking(true);
     setNotice("");
-    const nextMessages: ChatMessage[] = [...messages, { role: "user", content: prompt.trim() }];
+    const nextMessages: ChatMessage[] = [...messages, { role: "user", content: displayPrompt.trim() }];
+    const requestMessages: ChatMessage[] = [...messages, { role: "user", content: prompt.trim() }];
     setMessages(nextMessages);
     setQuestion("");
 
@@ -292,8 +303,8 @@ function App(): React.ReactElement {
           language,
           code,
           problem: selectedProblem,
-          runResult,
-          messages: nextMessages
+          runResult: resultForPrompt,
+          messages: requestMessages
         })
       });
       setMessages([...nextMessages, { role: "assistant", content: payload.message }]);
@@ -304,6 +315,23 @@ function App(): React.ReactElement {
       setNotice(message);
     } finally {
       setIsAsking(false);
+    }
+  }
+
+  async function submitSolution(): Promise<void> {
+    setIsSubmitting(true);
+    setIsRunning(true);
+    setNotice("");
+    try {
+      const latestRunResult = await executeRun();
+      setRunResult(latestRunResult);
+      setIsRunning(false);
+      await askAi(SUBMIT_PROMPT, latestRunResult, "submit");
+    } catch (error) {
+      showRunError(error);
+    } finally {
+      setIsRunning(false);
+      setIsSubmitting(false);
     }
   }
 
@@ -426,8 +454,14 @@ function App(): React.ReactElement {
   const passed = runResult?.results.filter((result) => result.passed).length ?? 0;
   const total = runResult?.results.length ?? selectedProblem.tests.length;
   const recommendation = health?.ollama.recommendation;
-  const ollamaBusy = isAsking || isGeneratingProblem || isParsingProblem;
-  const ollamaBusyLabel = isGeneratingProblem ? "GENERATING PROBLEM" : isParsingProblem ? "PARSING PROBLEM" : "THINKING";
+  const ollamaBusy = isAsking || isSubmitting || isGeneratingProblem || isParsingProblem;
+  const ollamaBusyLabel = isSubmitting
+    ? "SUBMISSION REVIEW"
+    : isGeneratingProblem
+      ? "GENERATING PROBLEM"
+      : isParsingProblem
+        ? "PARSING PROBLEM"
+        : "THINKING";
 
   return (
     <main className="app-shell">
@@ -663,6 +697,9 @@ function App(): React.ReactElement {
           <button type="button" onClick={runTests} disabled={isRunning}>
             {isRunning ? "RUNNING" : "RUN"}
           </button>
+          <button type="button" onClick={submitSolution} disabled={isRunning || isAsking || !health?.ollama.available}>
+            {isSubmitting ? "SUBMITTING" : "SUBMIT"}
+          </button>
         </div>
 
         <CodeMirror
@@ -687,7 +724,7 @@ function App(): React.ReactElement {
 
         <section className="results" aria-label="Test results">
           <div className="results-title">
-            <strong>TESTS</strong>
+            <strong>LOCAL TESTS</strong>
             <span>
               {passed}/{total}
             </span>
