@@ -694,6 +694,242 @@ export const includedProblems: Problem[] = [
       { name: "reuse blocked", input: { board: [["A", "B", "C", "E"], ["S", "F", "C", "S"], ["A", "D", "E", "E"]], word: "ABCB" }, expected: false },
       { name: "single", input: { board: [["A"]], word: "A" }, expected: true }
     ]
+  },
+  {
+    id: "unique-paths",
+    slug: "unique-paths",
+    title: "Unique Paths",
+    difficulty: "Medium",
+    tags: ["Dynamic Programming", "Math"],
+    source: "included",
+    statementMarkdown:
+      "A robot starts in the top-left of an `m` by `n` grid and can only move right or down. Return how many different paths reach the bottom-right cell.",
+    signature: {
+      functionName: "uniquePaths",
+      params: [
+        { name: "m", type: "int" },
+        { name: "n", type: "int" }
+      ],
+      returnType: "int"
+    },
+    examples: [{ input: { m: 3, n: 7 }, output: 28 }],
+    tests: [
+      { name: "wide", input: { m: 3, n: 7 }, expected: 28 },
+      { name: "small", input: { m: 3, n: 2 }, expected: 3 },
+      { name: "single row", input: { m: 1, n: 10 }, expected: 1 },
+      { name: "square", input: { m: 4, n: 4 }, expected: 20 }
+    ]
+  },
+  {
+    id: "jump-game",
+    slug: "jump-game",
+    title: "Jump Game",
+    difficulty: "Medium",
+    tags: ["Array", "Greedy"],
+    source: "included",
+    statementMarkdown:
+      "Each value in `nums` is the farthest jump length from that position. Return whether index `0` can reach the last index.",
+    signature: {
+      functionName: "canJump",
+      params: [{ name: "nums", type: "vector<int>" }],
+      returnType: "bool"
+    },
+    examples: [{ input: { nums: [2, 3, 1, 1, 4] }, output: true }],
+    tests: [
+      { name: "reachable", input: { nums: [2, 3, 1, 1, 4] }, expected: true },
+      { name: "stuck", input: { nums: [3, 2, 1, 0, 4] }, expected: false },
+      { name: "single", input: { nums: [0] }, expected: true },
+      { name: "zero after start", input: { nums: [2, 0, 0] }, expected: true }
+    ]
+  },
+  {
+    id: "gas-station",
+    slug: "gas-station",
+    title: "Gas Station",
+    difficulty: "Medium",
+    tags: ["Array", "Greedy"],
+    source: "included",
+    statementMarkdown:
+      "At station `i`, you gain `gas[i]` fuel and spend `cost[i]` fuel to drive to the next station. Return the start index that completes the circuit, or `-1` if none exists.",
+    signature: {
+      functionName: "canCompleteCircuit",
+      params: [
+        { name: "gas", type: "vector<int>" },
+        { name: "cost", type: "vector<int>" }
+      ],
+      returnType: "int"
+    },
+    examples: [{ input: { gas: [1, 2, 3, 4, 5], cost: [3, 4, 5, 1, 2] }, output: 3 }],
+    tests: [
+      { name: "classic", input: { gas: [1, 2, 3, 4, 5], cost: [3, 4, 5, 1, 2] }, expected: 3 },
+      { name: "impossible", input: { gas: [2, 3, 4], cost: [3, 4, 3] }, expected: -1 },
+      { name: "start zero", input: { gas: [5, 1, 2, 3, 4], cost: [4, 4, 1, 5, 1] }, expected: 4 },
+      { name: "single", input: { gas: [2], cost: [2] }, expected: 0 }
+    ]
+  },
+  {
+    id: "insert-interval",
+    slug: "insert-interval",
+    title: "Insert Interval",
+    difficulty: "Medium",
+    tags: ["Array", "Intervals"],
+    source: "included",
+    statementMarkdown:
+      "`intervals` is sorted by start and contains non-overlapping closed intervals. Insert `newInterval`, merge overlaps, and return the sorted result.",
+    signature: {
+      functionName: "insert",
+      params: [
+        { name: "intervals", type: "vector<vector<int>>" },
+        { name: "newInterval", type: "vector<int>" }
+      ],
+      returnType: "vector<vector<int>>"
+    },
+    examples: [{ input: { intervals: [[1, 3], [6, 9]], newInterval: [2, 5] }, output: [[1, 5], [6, 9]] }],
+    tests: [
+      { name: "middle merge", input: { intervals: [[1, 3], [6, 9]], newInterval: [2, 5] }, expected: [[1, 5], [6, 9]] },
+      { name: "multi merge", input: { intervals: [[1, 2], [3, 5], [6, 7], [8, 10], [12, 16]], newInterval: [4, 8] }, expected: [[1, 2], [3, 10], [12, 16]] },
+      { name: "empty", input: { intervals: [], newInterval: [5, 7] }, expected: [[5, 7]] },
+      { name: "before all", input: { intervals: [[3, 5], [7, 9]], newInterval: [1, 2] }, expected: [[1, 2], [3, 5], [7, 9]] }
+    ]
+  },
+  {
+    id: "non-overlapping-intervals",
+    slug: "non-overlapping-intervals",
+    title: "Non-overlapping Intervals",
+    difficulty: "Medium",
+    tags: ["Greedy", "Intervals"],
+    source: "included",
+    statementMarkdown:
+      "Return the fewest intervals to remove so the remaining intervals do not overlap. Intervals that only touch at an endpoint do not overlap.",
+    signature: {
+      functionName: "eraseOverlapIntervals",
+      params: [{ name: "intervals", type: "vector<vector<int>>" }],
+      returnType: "int"
+    },
+    examples: [{ input: { intervals: [[1, 2], [2, 3], [3, 4], [1, 3]] }, output: 1 }],
+    tests: [
+      { name: "one removal", input: { intervals: [[1, 2], [2, 3], [3, 4], [1, 3]] }, expected: 1 },
+      { name: "many same", input: { intervals: [[1, 2], [1, 2], [1, 2]] }, expected: 2 },
+      { name: "none", input: { intervals: [[1, 2], [2, 3]] }, expected: 0 },
+      { name: "nested", input: { intervals: [[1, 100], [11, 22], [1, 11], [2, 12]] }, expected: 2 }
+    ]
+  },
+  {
+    id: "rotting-oranges",
+    slug: "rotting-oranges",
+    title: "Rotting Oranges",
+    difficulty: "Medium",
+    tags: ["Matrix", "BFS"],
+    source: "included",
+    statementMarkdown:
+      "`0` is empty, `1` is fresh fruit, and `2` is rotten fruit. Each minute, rotten fruit rots adjacent fresh fruit. Return minutes until no fresh fruit remains, or `-1` if impossible.",
+    signature: {
+      functionName: "orangesRotting",
+      params: [{ name: "grid", type: "vector<vector<int>>" }],
+      returnType: "int"
+    },
+    examples: [{ input: { grid: [[2, 1, 1], [1, 1, 0], [0, 1, 1]] }, output: 4 }],
+    tests: [
+      { name: "classic", input: { grid: [[2, 1, 1], [1, 1, 0], [0, 1, 1]] }, expected: 4 },
+      { name: "blocked", input: { grid: [[2, 1, 1], [0, 1, 1], [1, 0, 1]] }, expected: -1 },
+      { name: "already done", input: { grid: [[0, 2]] }, expected: 0 },
+      { name: "one fresh no rot", input: { grid: [[1]] }, expected: -1 }
+    ]
+  },
+  {
+    id: "pacific-atlantic-water-flow",
+    slug: "pacific-atlantic-water-flow",
+    title: "Pacific Atlantic Water Flow",
+    difficulty: "Medium",
+    tags: ["Matrix", "DFS", "BFS"],
+    source: "included",
+    statementMarkdown:
+      "Water can flow from a cell to adjacent cells with height less than or equal to the current height. Return all coordinates that can flow to both the top/left edges and the bottom/right edges.\n\nReturn coordinates sorted by row, then column.",
+    signature: {
+      functionName: "pacificAtlantic",
+      params: [{ name: "heights", type: "vector<vector<int>>" }],
+      returnType: "vector<vector<int>>"
+    },
+    examples: [{ input: { heights: [[1, 2, 2, 3, 5], [3, 2, 3, 4, 4], [2, 4, 5, 3, 1], [6, 7, 1, 4, 5], [5, 1, 1, 2, 4]] }, output: [[0, 4], [1, 3], [1, 4], [2, 2], [3, 0], [3, 1], [4, 0]] }],
+    tests: [
+      { name: "classic", input: { heights: [[1, 2, 2, 3, 5], [3, 2, 3, 4, 4], [2, 4, 5, 3, 1], [6, 7, 1, 4, 5], [5, 1, 1, 2, 4]] }, expected: [[0, 4], [1, 3], [1, 4], [2, 2], [3, 0], [3, 1], [4, 0]] },
+      { name: "single", input: { heights: [[1]] }, expected: [[0, 0]] },
+      { name: "flat", input: { heights: [[1, 1], [1, 1]] }, expected: [[0, 0], [0, 1], [1, 0], [1, 1]] },
+      { name: "slope", input: { heights: [[3, 2], [2, 1]] }, expected: [[0, 0], [0, 1], [1, 0]] }
+    ]
+  },
+  {
+    id: "longest-repeating-character-replacement",
+    slug: "longest-repeating-character-replacement",
+    title: "Longest Repeating Character Replacement",
+    difficulty: "Medium",
+    tags: ["String", "Sliding Window"],
+    source: "included",
+    statementMarkdown:
+      "You may replace at most `k` characters in `s`. Return the length of the longest substring that can be made of one repeated character.",
+    signature: {
+      functionName: "characterReplacement",
+      params: [
+        { name: "s", type: "string" },
+        { name: "k", type: "int" }
+      ],
+      returnType: "int"
+    },
+    examples: [{ input: { s: "AABABBA", k: 1 }, output: 4 }],
+    tests: [
+      { name: "classic", input: { s: "AABABBA", k: 1 }, expected: 4 },
+      { name: "all fit", input: { s: "ABAB", k: 2 }, expected: 4 },
+      { name: "none", input: { s: "AAAA", k: 0 }, expected: 4 },
+      { name: "small", input: { s: "ABCDE", k: 1 }, expected: 2 }
+    ]
+  },
+  {
+    id: "word-ladder",
+    slug: "word-ladder",
+    title: "Word Ladder",
+    difficulty: "Hard",
+    tags: ["Graph", "BFS", "String"],
+    source: "included",
+    statementMarkdown:
+      "Change one character at a time to transform `beginWord` into `endWord`. Every intermediate word must be in `wordList`. Return the number of words in the shortest transformation sequence, or `0` if none exists.",
+    signature: {
+      functionName: "ladderLength",
+      params: [
+        { name: "beginWord", type: "string" },
+        { name: "endWord", type: "string" },
+        { name: "wordList", type: "vector<string>" }
+      ],
+      returnType: "int"
+    },
+    examples: [{ input: { beginWord: "hit", endWord: "cog", wordList: ["hot", "dot", "dog", "lot", "log", "cog"] }, output: 5 }],
+    tests: [
+      { name: "classic", input: { beginWord: "hit", endWord: "cog", wordList: ["hot", "dot", "dog", "lot", "log", "cog"] }, expected: 5 },
+      { name: "missing end", input: { beginWord: "hit", endWord: "cog", wordList: ["hot", "dot", "dog", "lot", "log"] }, expected: 0 },
+      { name: "one step", input: { beginWord: "a", endWord: "c", wordList: ["a", "b", "c"] }, expected: 2 },
+      { name: "detour", input: { beginWord: "red", endWord: "tax", wordList: ["ted", "tex", "red", "tax", "tad", "den", "rex", "pee"] }, expected: 4 }
+    ]
+  },
+  {
+    id: "burst-balloons",
+    slug: "burst-balloons",
+    title: "Burst Balloons",
+    difficulty: "Hard",
+    tags: ["Dynamic Programming", "Intervals"],
+    source: "included",
+    statementMarkdown:
+      "When you burst balloon `i`, you gain `left * nums[i] * right`, where `left` and `right` are the nearest remaining balloon values beside it. Missing outside neighbors count as `1`. Return the maximum coins possible.",
+    signature: {
+      functionName: "maxCoins",
+      params: [{ name: "nums", type: "vector<int>" }],
+      returnType: "int"
+    },
+    examples: [{ input: { nums: [3, 1, 5, 8] }, output: 167 }],
+    tests: [
+      { name: "classic", input: { nums: [3, 1, 5, 8] }, expected: 167 },
+      { name: "two", input: { nums: [1, 5] }, expected: 10 },
+      { name: "single", input: { nums: [7] }, expected: 7 },
+      { name: "with one", input: { nums: [1, 2, 3] }, expected: 12 }
+    ]
   }
 ];
 
