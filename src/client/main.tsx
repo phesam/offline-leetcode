@@ -399,6 +399,8 @@ function App(): React.ReactElement {
   const passed = runResult?.results.filter((result) => result.passed).length ?? 0;
   const total = runResult?.results.length ?? selectedProblem.tests.length;
   const recommendation = health?.ollama.recommendation;
+  const ollamaBusy = isAsking || isGeneratingProblem || isParsingProblem;
+  const ollamaBusyLabel = isGeneratingProblem ? "GENERATING PROBLEM" : isParsingProblem ? "PARSING PROBLEM" : "THINKING";
 
   return (
     <main className="app-shell">
@@ -457,8 +459,19 @@ function App(): React.ReactElement {
             placeholder="pattern"
           />
           <button type="button" onClick={generateProblem} disabled={isGeneratingProblem || !health?.ollama.available}>
-            {isGeneratingProblem ? "..." : "GENERATE"}
+            {isGeneratingProblem ? "WORKING" : "GENERATE"}
           </button>
+          {isGeneratingProblem && (
+            <div className="inline-loader" role="status" aria-live="polite">
+              <span>OLLAMA</span>
+              <span>GENERATING</span>
+              <span className="loader-dots" aria-hidden="true">
+                <i />
+                <i />
+                <i />
+              </span>
+            </div>
+          )}
         </div>
 
       </aside>
@@ -512,12 +525,23 @@ function App(): React.ReactElement {
             />
             <div className="drawer-actions">
               <button type="button" onClick={parseExactProblem} disabled={isParsingProblem || !pastedProblemText.trim()}>
-                {isParsingProblem ? "..." : "PARSE"}
+                {isParsingProblem ? "WORKING" : "PARSE"}
               </button>
               <button type="button" className="secondary" onClick={() => setShowAddProblem(false)}>
                 CLOSE
               </button>
             </div>
+            {isParsingProblem && (
+              <div className="inline-loader" role="status" aria-live="polite">
+                <span>OLLAMA</span>
+                <span>PARSING</span>
+                <span className="loader-dots" aria-hidden="true">
+                  <i />
+                  <i />
+                  <i />
+                </span>
+              </div>
+            )}
             <details className="schema-editor">
               <summary>edit</summary>
               <div className="form-grid">
@@ -686,14 +710,43 @@ function App(): React.ReactElement {
               </button>
             </div>
           )}
+          {ollamaBusy && (
+            <div className="ollama-loader" role="status" aria-live="polite">
+              <span className="loader-scan" aria-hidden="true" />
+              <div>
+                <strong>OLLAMA</strong>
+                <small>{ollamaBusyLabel}</small>
+              </div>
+              <span className="loader-dots" aria-hidden="true">
+                <i />
+                <i />
+                <i />
+              </span>
+            </div>
+          )}
           <div className="prompt-actions">
-            <button type="button" className="secondary" onClick={() => askAi("Give me a hint without giving away the solution.")}>
+            <button
+              type="button"
+              className="secondary"
+              onClick={() => askAi("Give me a hint without giving away the solution.")}
+              disabled={isAsking}
+            >
               HINT
             </button>
-            <button type="button" className="secondary" onClick={() => askAi("Review my code for correctness and complexity.")}>
+            <button
+              type="button"
+              className="secondary"
+              onClick={() => askAi("Review my code for correctness and complexity.")}
+              disabled={isAsking}
+            >
               REVIEW
             </button>
-            <button type="button" className="secondary" onClick={() => askAi("Use the latest test result to explain what is failing.")}>
+            <button
+              type="button"
+              className="secondary"
+              onClick={() => askAi("Use the latest test result to explain what is failing.")}
+              disabled={isAsking}
+            >
               WHY FAIL
             </button>
           </div>
@@ -704,11 +757,20 @@ function App(): React.ReactElement {
                 <p>{message.content}</p>
               </div>
             ))}
+            {isAsking && (
+              <div className="chat-message assistant pending">
+                <strong>AI</strong>
+                <p>
+                  waiting on {model || "ollama"}
+                  <span className="typing-cursor" aria-hidden="true" />
+                </p>
+              </div>
+            )}
           </div>
           <div className="ask-row">
-            <textarea value={question} onChange={(event) => setQuestion(event.target.value)} placeholder="> ask" />
+            <textarea value={question} onChange={(event) => setQuestion(event.target.value)} placeholder="> ask" disabled={isAsking} />
             <button type="button" onClick={() => askAi()} disabled={isAsking || !question.trim()}>
-              {isAsking ? "..." : "SEND"}
+              {isAsking ? "WAIT" : "SEND"}
             </button>
           </div>
         </section>
