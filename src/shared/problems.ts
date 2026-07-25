@@ -930,6 +930,246 @@ export const includedProblems: Problem[] = [
       { name: "single", input: { nums: [7] }, expected: 7 },
       { name: "with one", input: { nums: [1, 2, 3] }, expected: 12 }
     ]
+  },
+  {
+    id: "valid-anagram",
+    slug: "valid-anagram",
+    title: "Valid Anagram",
+    difficulty: "Easy",
+    tags: ["String", "Hash Table"],
+    source: "included",
+    statementMarkdown:
+      "Return whether `s` and `t` contain exactly the same characters with the same counts.",
+    signature: {
+      functionName: "isAnagram",
+      params: [
+        { name: "s", type: "string" },
+        { name: "t", type: "string" }
+      ],
+      returnType: "bool"
+    },
+    examples: [{ input: { s: "anagram", t: "nagaram" }, output: true }],
+    tests: [
+      { name: "same counts", input: { s: "anagram", t: "nagaram" }, expected: true },
+      { name: "different letters", input: { s: "rat", t: "car" }, expected: false },
+      { name: "same length wrong counts", input: { s: "aacc", t: "ccac" }, expected: false },
+      { name: "empty", input: { s: "", t: "" }, expected: true }
+    ]
+  },
+  {
+    id: "daily-temperatures",
+    slug: "daily-temperatures",
+    title: "Daily Temperatures",
+    difficulty: "Medium",
+    tags: ["Array", "Stack"],
+    source: "included",
+    statementMarkdown:
+      "For each day, return how many days you must wait until a warmer temperature appears. Use `0` when no warmer day exists.",
+    signature: {
+      functionName: "dailyTemperatures",
+      params: [{ name: "temperatures", type: "vector<int>" }],
+      returnType: "vector<int>"
+    },
+    examples: [{ input: { temperatures: [73, 74, 75, 71, 69, 72, 76, 73] }, output: [1, 1, 4, 2, 1, 1, 0, 0] }],
+    tests: [
+      { name: "mixed", input: { temperatures: [73, 74, 75, 71, 69, 72, 76, 73] }, expected: [1, 1, 4, 2, 1, 1, 0, 0] },
+      { name: "steady rise", input: { temperatures: [30, 40, 50, 60] }, expected: [1, 1, 1, 0] },
+      { name: "short rise", input: { temperatures: [30, 60, 90] }, expected: [1, 1, 0] },
+      { name: "cooling", input: { temperatures: [90, 80, 70] }, expected: [0, 0, 0] }
+    ]
+  },
+  {
+    id: "search-a-2d-matrix",
+    slug: "search-a-2d-matrix",
+    title: "Search a 2D Matrix",
+    difficulty: "Medium",
+    tags: ["Matrix", "Binary Search"],
+    source: "included",
+    statementMarkdown:
+      "Each row of `matrix` is sorted, and the first value of each row is greater than the last value of the previous row. Return whether `target` appears in the matrix.",
+    signature: {
+      functionName: "searchMatrix",
+      params: [
+        { name: "matrix", type: "vector<vector<int>>" },
+        { name: "target", type: "int" }
+      ],
+      returnType: "bool"
+    },
+    examples: [{ input: { matrix: [[1, 3, 5, 7], [10, 11, 16, 20], [23, 30, 34, 60]], target: 3 }, output: true }],
+    tests: [
+      { name: "found", input: { matrix: [[1, 3, 5, 7], [10, 11, 16, 20], [23, 30, 34, 60]], target: 3 }, expected: true },
+      { name: "missing", input: { matrix: [[1, 3, 5, 7], [10, 11, 16, 20], [23, 30, 34, 60]], target: 13 }, expected: false },
+      { name: "one row", input: { matrix: [[1, 2, 3, 4]], target: 4 }, expected: true },
+      { name: "single", input: { matrix: [[5]], target: 2 }, expected: false }
+    ]
+  },
+  {
+    id: "evaluate-reverse-polish-notation",
+    slug: "evaluate-reverse-polish-notation",
+    title: "Evaluate Reverse Polish Notation",
+    difficulty: "Medium",
+    tags: ["Stack", "Math"],
+    source: "included",
+    statementMarkdown:
+      "`tokens` contains integers and the operators `+`, `-`, `*`, and `/` in reverse Polish notation. Evaluate the expression. Integer division truncates toward zero.",
+    signature: {
+      functionName: "evalRPN",
+      params: [{ name: "tokens", type: "vector<string>" }],
+      returnType: "int"
+    },
+    examples: [{ input: { tokens: ["2", "1", "+", "3", "*"] }, output: 9 }],
+    tests: [
+      { name: "multiply sum", input: { tokens: ["2", "1", "+", "3", "*"] }, expected: 9 },
+      { name: "division", input: { tokens: ["4", "13", "5", "/", "+"] }, expected: 6 },
+      { name: "long expression", input: { tokens: ["10", "6", "9", "3", "+", "-11", "*", "/", "*", "17", "+", "5", "+"] }, expected: 22 },
+      { name: "negative truncation", input: { tokens: ["-3", "2", "/"] }, expected: -1 }
+    ]
+  },
+  {
+    id: "car-fleet",
+    slug: "car-fleet",
+    title: "Car Fleet",
+    difficulty: "Medium",
+    tags: ["Array", "Stack", "Sorting"],
+    source: "included",
+    statementMarkdown:
+      "Cars move toward `target`. A faster car that catches a slower car becomes part of that slower car's fleet. Return how many fleets reach the target.",
+    signature: {
+      functionName: "carFleet",
+      params: [
+        { name: "target", type: "int" },
+        { name: "position", type: "vector<int>" },
+        { name: "speed", type: "vector<int>" }
+      ],
+      returnType: "int"
+    },
+    examples: [{ input: { target: 12, position: [10, 8, 0, 5, 3], speed: [2, 4, 1, 1, 3] }, output: 3 }],
+    tests: [
+      { name: "classic", input: { target: 12, position: [10, 8, 0, 5, 3], speed: [2, 4, 1, 1, 3] }, expected: 3 },
+      { name: "single", input: { target: 10, position: [3], speed: [3] }, expected: 1 },
+      { name: "all merge", input: { target: 100, position: [0, 2, 4], speed: [4, 2, 1] }, expected: 1 },
+      { name: "two separate", input: { target: 10, position: [6, 8], speed: [3, 2] }, expected: 2 }
+    ]
+  },
+  {
+    id: "koko-eating-bananas",
+    slug: "koko-eating-bananas",
+    title: "Koko Eating Bananas",
+    difficulty: "Medium",
+    tags: ["Array", "Binary Search"],
+    source: "included",
+    statementMarkdown:
+      "At speed `k`, each hour removes up to `k` bananas from one pile. Return the smallest integer speed that finishes all piles within `h` hours.",
+    signature: {
+      functionName: "minEatingSpeed",
+      params: [
+        { name: "piles", type: "vector<int>" },
+        { name: "h", type: "int" }
+      ],
+      returnType: "int"
+    },
+    examples: [{ input: { piles: [3, 6, 7, 11], h: 8 }, output: 4 }],
+    tests: [
+      { name: "classic", input: { piles: [3, 6, 7, 11], h: 8 }, expected: 4 },
+      { name: "tight", input: { piles: [30, 11, 23, 4, 20], h: 5 }, expected: 30 },
+      { name: "one extra hour", input: { piles: [30, 11, 23, 4, 20], h: 6 }, expected: 23 },
+      { name: "small piles", input: { piles: [1, 1, 1], h: 3 }, expected: 1 }
+    ]
+  },
+  {
+    id: "partition-equal-subset-sum",
+    slug: "partition-equal-subset-sum",
+    title: "Partition Equal Subset Sum",
+    difficulty: "Medium",
+    tags: ["Array", "Dynamic Programming"],
+    source: "included",
+    statementMarkdown:
+      "Return whether `nums` can be split into two subsets whose sums are equal.",
+    signature: {
+      functionName: "canPartition",
+      params: [{ name: "nums", type: "vector<int>" }],
+      returnType: "bool"
+    },
+    examples: [{ input: { nums: [1, 5, 11, 5] }, output: true }],
+    tests: [
+      { name: "possible", input: { nums: [1, 5, 11, 5] }, expected: true },
+      { name: "odd total", input: { nums: [1, 2, 3, 5] }, expected: false },
+      { name: "even impossible", input: { nums: [2, 2, 3, 5] }, expected: false },
+      { name: "several options", input: { nums: [3, 3, 3, 4, 5] }, expected: true }
+    ]
+  },
+  {
+    id: "target-sum",
+    slug: "target-sum",
+    title: "Target Sum",
+    difficulty: "Medium",
+    tags: ["Array", "Dynamic Programming"],
+    source: "included",
+    statementMarkdown:
+      "Place either `+` or `-` before every number in `nums`. Return how many sign assignments evaluate to `target`.",
+    signature: {
+      functionName: "findTargetSumWays",
+      params: [
+        { name: "nums", type: "vector<int>" },
+        { name: "target", type: "int" }
+      ],
+      returnType: "int"
+    },
+    examples: [{ input: { nums: [1, 1, 1, 1, 1], target: 3 }, output: 5 }],
+    tests: [
+      { name: "classic", input: { nums: [1, 1, 1, 1, 1], target: 3 }, expected: 5 },
+      { name: "single yes", input: { nums: [1], target: 1 }, expected: 1 },
+      { name: "single no", input: { nums: [1], target: 2 }, expected: 0 },
+      { name: "zeros multiply ways", input: { nums: [0, 0, 0, 0, 0, 0, 0, 0, 1], target: 1 }, expected: 256 }
+    ]
+  },
+  {
+    id: "network-delay-time",
+    slug: "network-delay-time",
+    title: "Network Delay Time",
+    difficulty: "Medium",
+    tags: ["Graph", "Shortest Path", "Heap"],
+    source: "included",
+    statementMarkdown:
+      "`times[i] = [u, v, w]` means a signal takes `w` time to travel from `u` to `v`. Nodes are labeled `1` through `n`. Return how long a signal from `k` takes to reach every node, or `-1` if some node is unreachable.",
+    signature: {
+      functionName: "networkDelayTime",
+      params: [
+        { name: "times", type: "vector<vector<int>>" },
+        { name: "n", type: "int" },
+        { name: "k", type: "int" }
+      ],
+      returnType: "int"
+    },
+    examples: [{ input: { times: [[2, 1, 1], [2, 3, 1], [3, 4, 1]], n: 4, k: 2 }, output: 2 }],
+    tests: [
+      { name: "classic", input: { times: [[2, 1, 1], [2, 3, 1], [3, 4, 1]], n: 4, k: 2 }, expected: 2 },
+      { name: "two nodes", input: { times: [[1, 2, 1]], n: 2, k: 1 }, expected: 1 },
+      { name: "unreachable start", input: { times: [[1, 2, 1]], n: 2, k: 2 }, expected: -1 },
+      { name: "choose shorter path", input: { times: [[1, 2, 1], [2, 3, 2], [1, 3, 4]], n: 3, k: 1 }, expected: 3 }
+    ]
+  },
+  {
+    id: "n-queens",
+    slug: "n-queens",
+    title: "N-Queens",
+    difficulty: "Hard",
+    tags: ["Backtracking"],
+    source: "included",
+    statementMarkdown:
+      "Place `n` queens on an `n` by `n` board so no two attack each other. Return every board using `Q` for queens and `.` for empty cells.\n\nReturn boards ordered by the queen column in row `0`, then row `1`, and so on.",
+    signature: {
+      functionName: "solveNQueens",
+      params: [{ name: "n", type: "int" }],
+      returnType: "vector<vector<string>>"
+    },
+    examples: [{ input: { n: 4 }, output: [[".Q..", "...Q", "Q...", "..Q."], ["..Q.", "Q...", "...Q", ".Q.."]] }],
+    tests: [
+      { name: "four", input: { n: 4 }, expected: [[".Q..", "...Q", "Q...", "..Q."], ["..Q.", "Q...", "...Q", ".Q.."]] },
+      { name: "one", input: { n: 1 }, expected: [["Q"]] },
+      { name: "two", input: { n: 2 }, expected: [] },
+      { name: "three", input: { n: 3 }, expected: [] }
+    ]
   }
 ];
 
