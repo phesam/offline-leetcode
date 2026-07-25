@@ -24,6 +24,8 @@ import "./styles.css";
 const PERSONAL_PROBLEMS_KEY = "aircode.personalProblems.v1";
 const SOLUTIONS_KEY = "aircode.solutions.v1";
 const MODEL_KEY = "aircode.ollamaModel.v1";
+const API_OFFLINE_MESSAGE =
+  "Local API is not running. From the repo, run `npm run dev`, then open http://127.0.0.1:5173. For the built app, run `npm run build && npm run start`, then open http://127.0.0.1:4174.";
 
 interface Health {
   runner: { python: string; cpp: string };
@@ -120,6 +122,33 @@ function selectableModels(health: Health | undefined, currentModel: string): str
   return installed;
 }
 
+function isFetchFailure(error: unknown): boolean {
+  return error instanceof TypeError && error.message.toLowerCase().includes("fetch");
+}
+
+async function apiJson<T>(path: string, init?: RequestInit): Promise<T> {
+  try {
+    const response = await fetch(path, init);
+    const text = await response.text();
+    const payload = text ? (JSON.parse(text) as T) : ({} as T);
+    if (!response.ok) {
+      if (response.status >= 500 && path.startsWith("/api")) throw new Error(API_OFFLINE_MESSAGE);
+      const message =
+        typeof payload === "object" && payload && "message" in payload
+          ? String(payload.message)
+          : typeof payload === "object" && payload && "error" in payload
+            ? String(payload.error)
+            : `API returned ${response.status}.`;
+      throw new Error(message);
+    }
+    return payload;
+  } catch (error) {
+    if (isFetchFailure(error)) throw new Error(API_OFFLINE_MESSAGE);
+    if (error instanceof SyntaxError) throw new Error(API_OFFLINE_MESSAGE);
+    throw error;
+  }
+}
+
 function App(): React.ReactElement {
   const [personalProblems, setPersonalProblems] = React.useState<Problem[]>(() =>
     readJson<Problem[]>(PERSONAL_PROBLEMS_KEY, [])
@@ -153,8 +182,7 @@ function App(): React.ReactElement {
   const lastProblemId = React.useRef(selectedProblem.id);
 
   React.useEffect(() => {
-    fetch("/api/health")
-      .then((response) => response.json())
+    apiJson<Health>("/api/health")
       .then((payload: Health) => {
         setHealth(payload);
         const installed = selectableModels(payload, "");
@@ -162,10 +190,12 @@ function App(): React.ReactElement {
         const autoModel = payload.ollama.recommendation?.selectedModel || payload.ollama.defaultModel;
         setModel(storedModel && installed.includes(storedModel) ? storedModel : autoModel);
       })
-      .catch(() => setHealth(undefined));
+      .catch((error) => {
+        setHealth(undefined);
+        setNotice(error instanceof Error ? error.message : API_OFFLINE_MESSAGE);
+      });
 
-    fetch("/api/private-problems")
-      .then((response) => response.json())
+    apiJson<{ problems: Problem[] }>("/api/private-problems")
       .then((payload: { problems: Problem[] }) => {
         setPersonalProblems((current) => mergeProblems(current, payload.problems ?? []));
       })
@@ -210,12 +240,11 @@ function App(): React.ReactElement {
 
   async function savePrivate(problem: Problem): Promise<Problem> {
     try {
-      const response = await fetch("/api/private-problems", {
+      const payload = await apiJson<{ problem?: Problem }>("/api/private-problems", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(problem)
       });
-      const payload = (await response.json()) as { problem?: Problem };
       return payload.problem ?? problem;
     } catch {
       return problem;
@@ -226,20 +255,21 @@ function App(): React.ReactElement {
     setIsRunning(true);
     setNotice("");
     try {
-      const response = await fetch("/api/run", {
+      const payload = await apiJson<RunResponse>("/api/run", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ language, code, problem: selectedProblem })
       });
-      const payload = (await response.json()) as RunResponse;
       setRunResult(payload);
     } catch (error) {
+      const message = error instanceof Error ? error.message : "Could not reach the local runner.";
       setRunResult({
         ok: false,
-        stderr: error instanceof Error ? error.message : "Could not reach the local runner.",
+        stderr: message,
         results: [],
         durationMs: 0
       });
+      setNotice(message);
     } finally {
       setIsRunning(false);
     }
@@ -254,7 +284,7 @@ function App(): React.ReactElement {
     setQuestion("");
 
     try {
-      const response = await fetch("/api/ask", {
+      const payload = await apiJson<AskResponse>("/api/ask", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -266,11 +296,10 @@ function App(): React.ReactElement {
           messages: nextMessages
         })
       });
-      const payload = (await response.json()) as AskResponse;
       setMessages([...nextMessages, { role: "assistant", content: payload.message }]);
       if (!payload.ok) setNotice(payload.message);
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Could not reach Ollama.";
+      const message = error instanceof Error ? error.message : "Could not reach the local API.";
       setMessages([...nextMessages, { role: "assistant", content: message }]);
       setNotice(message);
     } finally {
@@ -340,7 +369,7 @@ function App(): React.ReactElement {
     setIsGeneratingProblem(true);
     setNotice("");
     try {
-      const response = await fetch("/api/generate-problem", {
+      const payload = await apiJson<GenerateProblemResponse>("/api/generate-problem", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -349,7 +378,6 @@ function App(): React.ReactElement {
           topic: generatedTopic
         })
       });
-      const payload = (await response.json()) as GenerateProblemResponse;
       if (!payload.ok || !payload.problem) {
         setNotice(payload.message || "Ollama could not generate a problem.");
         return;
@@ -373,12 +401,11 @@ function App(): React.ReactElement {
         model,
         rawText: pastedProblemText
       };
-      const response = await fetch("/api/parse-problem", {
+      const payload = await apiJson<GenerateProblemResponse>("/api/parse-problem", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(requestBody)
       });
-      const payload = (await response.json()) as GenerateProblemResponse;
       if (!payload.ok || !payload.problem) {
         setNotice(payload.message || "Could not parse problem.");
         return;
