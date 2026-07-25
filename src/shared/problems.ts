@@ -465,6 +465,235 @@ export const includedProblems: Problem[] = [
       { name: "empty source", input: { word1: "", word2: "abc" }, expected: 3 },
       { name: "same", input: { word1: "plane", word2: "plane" }, expected: 0 }
     ]
+  },
+  {
+    id: "longest-substring-without-repeating-characters",
+    slug: "longest-substring-without-repeating-characters",
+    title: "Longest Substring Without Repeating Characters",
+    difficulty: "Medium",
+    tags: ["String", "Sliding Window"],
+    source: "included",
+    statementMarkdown:
+      "Return the length of the longest contiguous substring of `s` that contains no repeated characters.",
+    signature: {
+      functionName: "lengthOfLongestSubstring",
+      params: [{ name: "s", type: "string" }],
+      returnType: "int"
+    },
+    examples: [{ input: { s: "abcabcbb" }, output: 3 }],
+    tests: [
+      { name: "classic", input: { s: "abcabcbb" }, expected: 3 },
+      { name: "all same", input: { s: "bbbbb" }, expected: 1 },
+      { name: "overlap", input: { s: "pwwkew" }, expected: 3 },
+      { name: "empty", input: { s: "" }, expected: 0 }
+    ]
+  },
+  {
+    id: "number-of-islands",
+    slug: "number-of-islands",
+    title: "Number of Islands",
+    difficulty: "Medium",
+    tags: ["Matrix", "DFS", "BFS"],
+    source: "included",
+    statementMarkdown:
+      "Given a grid of `0`s and `1`s, count connected groups of `1`s. Connections are horizontal or vertical only.",
+    signature: {
+      functionName: "numIslands",
+      params: [{ name: "grid", type: "vector<vector<int>>" }],
+      returnType: "int"
+    },
+    examples: [{ input: { grid: [[1, 1, 0], [0, 1, 0], [1, 0, 1]] }, output: 3 }],
+    tests: [
+      { name: "three islands", input: { grid: [[1, 1, 0], [0, 1, 0], [1, 0, 1]] }, expected: 3 },
+      { name: "one island", input: { grid: [[1, 1, 1], [0, 1, 0], [1, 1, 1]] }, expected: 1 },
+      { name: "water", input: { grid: [[0, 0], [0, 0]] }, expected: 0 },
+      { name: "diagonal separate", input: { grid: [[1, 0], [0, 1]] }, expected: 2 }
+    ]
+  },
+  {
+    id: "house-robber",
+    slug: "house-robber",
+    title: "House Robber",
+    difficulty: "Medium",
+    tags: ["Dynamic Programming", "Array"],
+    source: "included",
+    statementMarkdown:
+      "Each value in `nums` is money in a house. Adjacent houses cannot both be taken. Return the most money possible.",
+    signature: {
+      functionName: "rob",
+      params: [{ name: "nums", type: "vector<int>" }],
+      returnType: "int"
+    },
+    examples: [{ input: { nums: [1, 2, 3, 1] }, output: 4 }],
+    tests: [
+      { name: "small", input: { nums: [1, 2, 3, 1] }, expected: 4 },
+      { name: "choose ends", input: { nums: [2, 7, 9, 3, 1] }, expected: 12 },
+      { name: "single", input: { nums: [5] }, expected: 5 },
+      { name: "empty", input: { nums: [] }, expected: 0 }
+    ]
+  },
+  {
+    id: "decode-ways",
+    slug: "decode-ways",
+    title: "Decode Ways",
+    difficulty: "Medium",
+    tags: ["Dynamic Programming", "String"],
+    source: "included",
+    statementMarkdown:
+      "Digits map to letters with `1 -> A` through `26 -> Z`. Return how many valid decodings string `s` has.",
+    signature: {
+      functionName: "numDecodings",
+      params: [{ name: "s", type: "string" }],
+      returnType: "int"
+    },
+    examples: [{ input: { s: "226" }, output: 3 }],
+    tests: [
+      { name: "two paths", input: { s: "12" }, expected: 2 },
+      { name: "three paths", input: { s: "226" }, expected: 3 },
+      { name: "leading zero", input: { s: "06" }, expected: 0 },
+      { name: "valid zero", input: { s: "2101" }, expected: 1 }
+    ]
+  },
+  {
+    id: "palindrome-partitioning",
+    slug: "palindrome-partitioning",
+    title: "Palindrome Partitioning",
+    difficulty: "Medium",
+    tags: ["Backtracking", "String"],
+    source: "included",
+    statementMarkdown:
+      "Split `s` into substrings so every substring is a palindrome.\n\nReturn partitions in depth-first order, trying shorter prefixes before longer prefixes.",
+    signature: {
+      functionName: "partition",
+      params: [{ name: "s", type: "string" }],
+      returnType: "vector<vector<string>>"
+    },
+    examples: [{ input: { s: "aab" }, output: [["a", "a", "b"], ["aa", "b"]] }],
+    tests: [
+      { name: "classic", input: { s: "aab" }, expected: [["a", "a", "b"], ["aa", "b"]] },
+      { name: "single", input: { s: "a" }, expected: [["a"]] },
+      { name: "all same", input: { s: "aaa" }, expected: [["a", "a", "a"], ["a", "aa"], ["aa", "a"], ["aaa"]] },
+      { name: "none longer", input: { s: "ab" }, expected: [["a", "b"]] }
+    ]
+  },
+  {
+    id: "kth-largest-element-in-array",
+    slug: "kth-largest-element-in-array",
+    title: "Kth Largest Element in an Array",
+    difficulty: "Medium",
+    tags: ["Heap", "Quickselect", "Sorting"],
+    source: "included",
+    statementMarkdown:
+      "Return the value that would be at position `k` if `nums` were sorted from largest to smallest. Duplicate values count as separate positions.",
+    signature: {
+      functionName: "findKthLargest",
+      params: [
+        { name: "nums", type: "vector<int>" },
+        { name: "k", type: "int" }
+      ],
+      returnType: "int"
+    },
+    examples: [{ input: { nums: [3, 2, 1, 5, 6, 4], k: 2 }, output: 5 }],
+    tests: [
+      { name: "simple", input: { nums: [3, 2, 1, 5, 6, 4], k: 2 }, expected: 5 },
+      { name: "duplicates", input: { nums: [3, 2, 3, 1, 2, 4, 5, 5, 6], k: 4 }, expected: 4 },
+      { name: "first", input: { nums: [7, 6, 5], k: 1 }, expected: 7 },
+      { name: "last", input: { nums: [7, 6, 5], k: 3 }, expected: 5 }
+    ]
+  },
+  {
+    id: "set-matrix-zeroes",
+    slug: "set-matrix-zeroes",
+    title: "Set Matrix Zeroes",
+    difficulty: "Medium",
+    tags: ["Matrix", "Array"],
+    source: "included",
+    statementMarkdown:
+      "If a cell in `matrix` is `0`, set its entire row and column to `0`. Return the modified matrix.",
+    signature: {
+      functionName: "setZeroes",
+      params: [{ name: "matrix", type: "vector<vector<int>>" }],
+      returnType: "vector<vector<int>>"
+    },
+    examples: [{ input: { matrix: [[1, 1, 1], [1, 0, 1], [1, 1, 1]] }, output: [[1, 0, 1], [0, 0, 0], [1, 0, 1]] }],
+    tests: [
+      { name: "center", input: { matrix: [[1, 1, 1], [1, 0, 1], [1, 1, 1]] }, expected: [[1, 0, 1], [0, 0, 0], [1, 0, 1]] },
+      { name: "corner", input: { matrix: [[0, 1], [1, 1]] }, expected: [[0, 0], [0, 1]] },
+      { name: "multiple", input: { matrix: [[1, 2, 3], [4, 0, 6], [7, 8, 0]] }, expected: [[1, 0, 0], [0, 0, 0], [0, 0, 0]] },
+      { name: "no zero", input: { matrix: [[1, 2], [3, 4]] }, expected: [[1, 2], [3, 4]] }
+    ]
+  },
+  {
+    id: "spiral-matrix",
+    slug: "spiral-matrix",
+    title: "Spiral Matrix",
+    difficulty: "Medium",
+    tags: ["Matrix", "Simulation"],
+    source: "included",
+    statementMarkdown:
+      "Return all values of `matrix` in clockwise spiral order, starting from the top-left cell.",
+    signature: {
+      functionName: "spiralOrder",
+      params: [{ name: "matrix", type: "vector<vector<int>>" }],
+      returnType: "vector<int>"
+    },
+    examples: [{ input: { matrix: [[1, 2, 3], [4, 5, 6], [7, 8, 9]] }, output: [1, 2, 3, 6, 9, 8, 7, 4, 5] }],
+    tests: [
+      { name: "square", input: { matrix: [[1, 2, 3], [4, 5, 6], [7, 8, 9]] }, expected: [1, 2, 3, 6, 9, 8, 7, 4, 5] },
+      { name: "wide", input: { matrix: [[1, 2, 3, 4], [5, 6, 7, 8]] }, expected: [1, 2, 3, 4, 8, 7, 6, 5] },
+      { name: "tall", input: { matrix: [[1], [2], [3]] }, expected: [1, 2, 3] },
+      { name: "single row", input: { matrix: [[1, 2, 3]] }, expected: [1, 2, 3] }
+    ]
+  },
+  {
+    id: "minimum-window-substring",
+    slug: "minimum-window-substring",
+    title: "Minimum Window Substring",
+    difficulty: "Hard",
+    tags: ["String", "Sliding Window"],
+    source: "included",
+    statementMarkdown:
+      "Return the shortest substring of `s` that contains every character of `t`, including duplicate character counts. Return an empty string if no such window exists.",
+    signature: {
+      functionName: "minWindow",
+      params: [
+        { name: "s", type: "string" },
+        { name: "t", type: "string" }
+      ],
+      returnType: "string"
+    },
+    examples: [{ input: { s: "ADOBECODEBANC", t: "ABC" }, output: "BANC" }],
+    tests: [
+      { name: "classic", input: { s: "ADOBECODEBANC", t: "ABC" }, expected: "BANC" },
+      { name: "single", input: { s: "a", t: "a" }, expected: "a" },
+      { name: "missing", input: { s: "a", t: "aa" }, expected: "" },
+      { name: "duplicates", input: { s: "aaabdabcefaecbef", t: "abc" }, expected: "abc" }
+    ]
+  },
+  {
+    id: "word-search",
+    slug: "word-search",
+    title: "Word Search",
+    difficulty: "Medium",
+    tags: ["Matrix", "Backtracking"],
+    source: "included",
+    statementMarkdown:
+      "Return whether `word` can be formed by walking horizontally or vertically through adjacent cells. A cell may be used at most once in the same path.",
+    signature: {
+      functionName: "exist",
+      params: [
+        { name: "board", type: "vector<vector<string>>" },
+        { name: "word", type: "string" }
+      ],
+      returnType: "bool"
+    },
+    examples: [{ input: { board: [["A", "B", "C", "E"], ["S", "F", "C", "S"], ["A", "D", "E", "E"]], word: "ABCCED" }, output: true }],
+    tests: [
+      { name: "path exists", input: { board: [["A", "B", "C", "E"], ["S", "F", "C", "S"], ["A", "D", "E", "E"]], word: "ABCCED" }, expected: true },
+      { name: "short path", input: { board: [["A", "B", "C", "E"], ["S", "F", "C", "S"], ["A", "D", "E", "E"]], word: "SEE" }, expected: true },
+      { name: "reuse blocked", input: { board: [["A", "B", "C", "E"], ["S", "F", "C", "S"], ["A", "D", "E", "E"]], word: "ABCB" }, expected: false },
+      { name: "single", input: { board: [["A"]], word: "A" }, expected: true }
+    ]
   }
 ];
 
