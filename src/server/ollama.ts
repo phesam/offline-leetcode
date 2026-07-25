@@ -12,7 +12,7 @@ import type {
 
 const OLLAMA_HOST = process.env.OLLAMA_HOST ?? "http://127.0.0.1:11434";
 const FALLBACK_MODEL = "qwen2.5-coder:7b";
-const OLLAMA_CHAT_TIMEOUT_MS = 90_000;
+const OLLAMA_CHAT_TIMEOUT_MS = Number(process.env.OLLAMA_CHAT_TIMEOUT_MS ?? 300_000);
 
 interface OllamaTagsResponse {
   models?: Array<{
@@ -35,6 +35,20 @@ async function postOllamaChat(body: unknown, timeoutMs = OLLAMA_CHAT_TIMEOUT_MS)
   } finally {
     clearTimeout(timer);
   }
+}
+
+function isAbortError(error: unknown): boolean {
+  return error instanceof Error && (error.name === "AbortError" || error.message.toLowerCase().includes("aborted"));
+}
+
+function ollamaErrorMessage(error: unknown, model: string): string {
+  if (isAbortError(error)) {
+    return `Ollama timed out after ${Math.round(OLLAMA_CHAT_TIMEOUT_MS / 1000)}s while ${model} was thinking. Try again, use a smaller model from the dropdown, or set OLLAMA_CHAT_TIMEOUT_MS higher before starting AirCode.`;
+  }
+
+  return error instanceof Error
+    ? `${error.message}. Start Ollama with 'ollama serve' and pull a model before going offline.`
+    : "Could not connect to Ollama.";
 }
 
 function totalMemoryGb(): number {
@@ -223,10 +237,7 @@ ${runSummary}
   } catch (error) {
     return {
       ok: false,
-      message:
-        error instanceof Error
-          ? `${error.message}. Start Ollama with 'ollama serve' and pull a model before going offline.`
-          : "Could not connect to Ollama.",
+      message: ollamaErrorMessage(error, model),
       model
     };
   }
