@@ -1,0 +1,44 @@
+{
+  "name": "aircode-offline-practice",
+  "version": "0.1.0",
+  "description": "Offline LeetCode-style practice with local Python/C++ runners and Ollama coaching.",
+  "type": "module",
+  "private": false,
+  "license": "MIT",
+  "scripts": {
+    "dev": "concurrently -n api,web -c cyan,magenta \"tsx watch src/server/index.ts\" \"vite --host 127.0.0.1\"",
+    "dev:api": "tsx watch src/server/index.ts",
+    "dev:web": "vite --host 127.0.0.1",
+    "build": "tsc && vite build",
+    "start": "NODE_ENV=production tsx src/server/index.ts",
+    "check": "tsc --noEmit",
+    "smoke": "tsx scripts/smoke.ts"
+  },
+  "dependencies": {
+    "@codemirror/commands": "^6.10.4",
+    "@codemirror/lang-cpp": "^6.0.3",
+    "@codemirror/lang-python": "^6.2.1",
+    "@codemirror/language": "^6.12.4",
+    "@codemirror/state": "^6.7.1",
+    "@codemirror/view": "^6.43.6",
+    "@uiw/react-codemirror": "^4.25.11",
+    "@vitejs/plugin-react": "^4.3.4",
+    "concurrently": "^9.1.2",
+    "express": "^4.21.2",
+    "marked": "^15.0.7",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3",
+    "vite": "^6.0.7"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.10.5",
+    "@types/react": "^19.0.2",
+    "@types/react-dom": "^19.0.2"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
