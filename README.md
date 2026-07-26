@@ -24,7 +24,7 @@ npm install
 Start:
 
 ```bash
-./aircode
+npm run aircode
 ```
 
 That starts Ollama if needed, starts AirCode, and opens the app.
@@ -40,7 +40,7 @@ ollama pull qwen2.5-coder:14b
 Then run AirCode once while you still have Wi-Fi:
 
 ```bash
-./aircode
+npm run aircode
 ```
 
 Add any exact LeetCode problems you want by clicking **Add Exact Problem**.
@@ -59,7 +59,7 @@ Private problems are saved in `.aircode/problems/`, which is ignored by git.
 After opening your laptop on the plane:
 
 ```bash
-./aircode
+npm run aircode
 ```
 
 That is it.
