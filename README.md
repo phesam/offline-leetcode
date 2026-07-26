@@ -15,7 +15,7 @@ AirCode runs on your laptop. No account. No cloud backend. Good for planes.
 
 ## Setup
 
-Install:
+First time only:
 
 ```bash
 npm install
@@ -24,14 +24,10 @@ npm install
 Start:
 
 ```bash
-npm run dev
+./aircode
 ```
 
-Open:
-
-```text
-http://127.0.0.1:5173
-```
+That starts Ollama if needed, starts AirCode, and opens the app.
 
 ## Before Your Flight
 
@@ -44,7 +40,7 @@ ollama pull qwen2.5-coder:14b
 Then run AirCode once while you still have Wi-Fi:
 
 ```bash
-npm run dev
+./aircode
 ```
 
 Add any exact LeetCode problems you want by clicking **Add Exact Problem**.
@@ -55,8 +51,18 @@ Private problems are saved in `.aircode/problems/`, which is ignored by git.
 1. Pick a problem.
 2. Choose Python or C++.
 3. Write code.
-4. Click **Run Tests**.
-5. Ask Ollama for a hint, review, or explanation.
+4. Click **Run** for local tests.
+5. Click **Submit** for Ollama review.
+
+## Plane Mode
+
+After opening your laptop on the plane:
+
+```bash
+./aircode
+```
+
+That is it.
 
 ## Exact LeetCode Problems
 

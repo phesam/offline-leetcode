@@ -10,7 +10,8 @@
     "dev:api": "tsx watch src/server/index.ts",
     "dev:web": "vite --host 127.0.0.1",
     "build": "tsc && vite build",
-    "start": "NODE_ENV=production tsx src/server/index.ts",
+    "start": "tsx src/server/index.ts",
+    "aircode": "node scripts/aircode.mjs",
     "check": "tsc --noEmit",
     "smoke": "tsx scripts/smoke.ts"
   },

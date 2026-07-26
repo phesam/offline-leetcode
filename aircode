@@ -1,0 +1,11 @@
+#!/usr/bin/env sh
+set -eu
+
+cd "$(dirname "$0")"
+
+if ! command -v node >/dev/null 2>&1; then
+  echo "[aircode] Node.js is missing. Install Node 20+ once, then run ./aircode again." >&2
+  exit 1
+fi
+
+exec node scripts/aircode.mjs
