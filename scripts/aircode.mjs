@@ -107,6 +107,7 @@ function buildIsFresh(indexPath) {
   const sourceAt = newestMtime([
     path.join(process.cwd(), "src"),
     path.join(process.cwd(), "index.html"),
+    path.join(process.cwd(), "system-design.html"),
     path.join(process.cwd(), "package.json"),
     path.join(process.cwd(), "package-lock.json"),
     path.join(process.cwd(), "tsconfig.json"),

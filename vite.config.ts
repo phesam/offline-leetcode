@@ -1,4 +1,5 @@
 import react from "@vitejs/plugin-react";
+import { resolve } from "node:path";
 import { defineConfig } from "vite";
 
 export default defineConfig({
@@ -11,6 +12,12 @@ export default defineConfig({
     }
   },
   build: {
-    outDir: "dist/client"
+    outDir: "dist/client",
+    rollupOptions: {
+      input: {
+        main: resolve(__dirname, "index.html"),
+        systemDesign: resolve(__dirname, "system-design.html")
+      }
+    }
   }
 });

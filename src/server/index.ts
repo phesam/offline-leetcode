@@ -2,8 +2,8 @@ import express from "express";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { includedProblems } from "../shared/problems";
-import type { AskRequest, GenerateProblemRequest, ParseProblemRequest, RunRequest } from "../shared/types";
-import { askOllama, generateProblemWithOllama, ollamaHealth, parseProblemWithOllama } from "./ollama";
+import type { AskRequest, GenerateProblemRequest, ParseProblemRequest, RunRequest, SystemDesignReviewRequest } from "../shared/types";
+import { askOllama, generateProblemWithOllama, ollamaHealth, parseProblemWithOllama, reviewSystemDesignWithOllama } from "./ollama";
 import { deletePrivateProblem, readPrivateProblems, savePrivateProblem } from "./privateProblems";
 import { readBuiltIndex, runnerHealth, runSubmission } from "./runner";
 
@@ -74,6 +74,20 @@ app.post("/api/parse-problem", async (request, response) => {
     return;
   }
   response.json(await parseProblemWithOllama(body));
+});
+
+app.post("/api/system-design-review", async (request, response) => {
+  const body = request.body as SystemDesignReviewRequest;
+  if (!body?.answer?.promptId) {
+    response.status(400).json({ ok: false, message: "Missing system design answer." });
+    return;
+  }
+  const controller = new AbortController();
+  response.on("close", () => {
+    if (!response.writableEnded) controller.abort();
+  });
+  const payload = await reviewSystemDesignWithOllama(body, controller.signal);
+  if (!response.destroyed) response.json(payload);
 });
 
 const builtClient = path.resolve(__dirname, "../../dist/client");

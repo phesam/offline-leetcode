@@ -95,6 +95,30 @@ export interface AskResponse {
   model?: string;
 }
 
+export interface SystemDesignAnswer {
+  promptId: string;
+  promptTitle: string;
+  level: "Mid" | "Senior" | "Staff";
+  requirements: string;
+  scale: string;
+  api: string;
+  dataModel: string;
+  architecture: string;
+  deepDives: string;
+  risks: string;
+}
+
+export interface SystemDesignReviewRequest {
+  model: string;
+  answer: SystemDesignAnswer;
+}
+
+export interface SystemDesignReviewResponse {
+  ok: boolean;
+  message: string;
+  model?: string;
+}
+
 export interface GenerateProblemRequest {
   model: string;
   difficulty: Difficulty;

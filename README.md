@@ -12,6 +12,7 @@ AirCode runs on your laptop. No account. No cloud backend. Good for planes.
 - Ask Ollama for hints and code review
 - Add your own exact LeetCode problems for personal offline use
 - Generate original practice problems with Ollama
+- Practice system design on a separate page
 
 ## Setup
 
@@ -28,6 +29,12 @@ npm run aircode
 ```
 
 That starts Ollama if needed, starts AirCode, and opens the app.
+
+System design mode:
+
+```text
+http://127.0.0.1:4174/system-design.html
+```
 
 ## Before Your Flight
 
@@ -53,6 +60,16 @@ Private problems are saved in `.aircode/problems/`, which is ignored by git.
 3. Write code.
 4. Click **Run** for local tests.
 5. Click **Submit** for Ollama review.
+
+## System Design
+
+Open:
+
+```text
+http://127.0.0.1:4174/system-design.html
+```
+
+Pick a prompt, use the timer, fill the sections, then click **Review** for Ollama feedback.
 
 ## Plane Mode
 

@@ -7,7 +7,9 @@ import type {
   OllamaModelInfo,
   OllamaRecommendation,
   ParseProblemRequest,
-  Problem
+  Problem,
+  SystemDesignReviewRequest,
+  SystemDesignReviewResponse
 } from "../shared/types";
 
 const OLLAMA_HOST = process.env.OLLAMA_HOST ?? "http://127.0.0.1:11434";
@@ -435,6 +437,94 @@ ${rawText}`;
           : error instanceof Error
             ? error.message
             : "Could not parse the pasted problem.",
+      model
+    };
+  }
+}
+
+export async function reviewSystemDesignWithOllama(
+  request: SystemDesignReviewRequest,
+  signal?: AbortSignal
+): Promise<SystemDesignReviewResponse> {
+  let model = request.model.trim();
+  if (!model) {
+    model = buildRecommendation(await getInstalledModels()).selectedModel;
+  }
+
+  const answer = request.answer;
+  const prompt = `Review this system design interview answer.
+
+Target level: ${answer.level}
+Prompt: ${answer.promptTitle}
+
+Candidate notes:
+
+Requirements:
+${answer.requirements || "(empty)"}
+
+Scale:
+${answer.scale || "(empty)"}
+
+API:
+${answer.api || "(empty)"}
+
+Data model:
+${answer.dataModel || "(empty)"}
+
+Architecture:
+${answer.architecture || "(empty)"}
+
+Deep dives:
+${answer.deepDives || "(empty)"}
+
+Risks:
+${answer.risks || "(empty)"}
+
+Return concise Markdown with:
+1. Verdict: PASS, FAIL, or UNSURE for the target level.
+2. Scorecard for requirements, scale, API, data model, architecture, deep dives, trade-offs.
+3. The biggest missing piece.
+4. Two specific follow-up questions an interviewer would ask.
+5. One concrete next improvement.
+
+Be strict but practical. Do not claim there is one canonical design. Prefer trade-offs over buzzwords.`;
+
+  try {
+    const response = await postOllamaChat(
+      {
+        model,
+        stream: false,
+        options: {
+          temperature: 0.2,
+          num_predict: 1400
+        },
+        messages: [
+          {
+            role: "system",
+            content:
+              "You are an offline system design interview coach. Evaluate structure, trade-offs, and depth. Be concise and direct."
+          },
+          { role: "user", content: prompt }
+        ]
+      },
+      OLLAMA_CHAT_TIMEOUT_MS,
+      signal
+    );
+
+    if (!response.ok) {
+      return { ok: false, message: `Ollama returned ${response.status} while reviewing the design.`, model };
+    }
+
+    const payload = (await response.json()) as { message?: { content?: string } };
+    return {
+      ok: true,
+      message: payload.message?.content?.trim() || "Ollama returned an empty response.",
+      model
+    };
+  } catch (error) {
+    return {
+      ok: false,
+      message: ollamaErrorMessage(error, model, signal?.aborted),
       model
     };
   }
