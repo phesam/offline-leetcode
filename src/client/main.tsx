@@ -23,7 +23,7 @@ import "./styles.css";
 
 const PERSONAL_PROBLEMS_KEY = "aircode.personalProblems.v1";
 const SOLUTIONS_KEY = "aircode.solutions.v1";
-const MODEL_KEY = "aircode.ollamaModel.v1";
+const MODEL_KEY = "aircode.ollamaModel.v2";
 const API_OFFLINE_MESSAGE =
   "Local API is not running. From the repo, run `npm run dev`, then open http://127.0.0.1:5173. For the built app, run `npm run build && npm run start`, then open http://127.0.0.1:4174.";
 const SUBMIT_PROMPT =

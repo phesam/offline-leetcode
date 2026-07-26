@@ -41,7 +41,7 @@ http://127.0.0.1:4174/system-design.html
 Install Ollama and pull a good coding model:
 
 ```bash
-ollama pull qwen2.5-coder:14b
+ollama pull deepseek-r1
 ```
 
 Then run AirCode once while you still have Wi-Fi:

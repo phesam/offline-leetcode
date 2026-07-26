@@ -13,7 +13,7 @@ import type {
 } from "../shared/types";
 
 const OLLAMA_HOST = process.env.OLLAMA_HOST ?? "http://127.0.0.1:11434";
-const FALLBACK_MODEL = "qwen2.5-coder:7b";
+const FALLBACK_MODEL = "deepseek-r1:latest";
 const OLLAMA_CHAT_TIMEOUT_MS = Number(process.env.OLLAMA_CHAT_TIMEOUT_MS ?? 300_000);
 
 interface OllamaTagsResponse {
@@ -72,21 +72,21 @@ function bestFitForHardware(memoryGb: number): { model: string; reason: string }
 
   if (memoryGb >= 14) {
     return {
-      model: "qwen2.5-coder:14b",
-      reason: "Your machine has about 16 GB-class memory, so Qwen2.5-Coder 14B is the strongest practical coding-focused target."
+      model: "deepseek-r1:latest",
+      reason: "Your machine is in the 16 GB-class range, so AirCode recommends DeepSeek R1 as the lighter default to avoid hammering memory."
     };
   }
 
   if (memoryGb >= 8) {
     return {
-      model: "qwen2.5-coder:7b",
-      reason: "Your machine is in the 8 GB-class range, so Qwen2.5-Coder 7B is the best practical coding-focused target."
+      model: "deepseek-r1:latest",
+      reason: "Your machine is in the 8 GB-class range, so AirCode recommends DeepSeek R1 as the practical local default."
     };
   }
 
   return {
-    model: "qwen2.5-coder:3b",
-    reason: "Your machine has limited memory, so AirCode recommends the smaller Qwen2.5-Coder 3B model."
+    model: "deepseek-r1:latest",
+    reason: "Your machine has limited memory, so AirCode recommends using the lightest pulled model available; DeepSeek R1 is the preferred default if installed."
   };
 }
 
@@ -95,12 +95,12 @@ function modelRank(name: string): number {
   let score = 0;
 
   if (normalized.includes("embed")) return -1000;
-  if (normalized.includes("qwen") && normalized.includes("coder")) score += 1000;
+  if (normalized.includes("deepseek-r1")) score += 1100;
+  else if (normalized.includes("qwen") && normalized.includes("coder")) score += 1000;
   else if (normalized.includes("deepseek") && normalized.includes("coder")) score += 920;
   else if (normalized.includes("codestral")) score += 880;
   else if (normalized.includes("codellama")) score += 820;
   else if (normalized.includes("starcoder")) score += 780;
-  else if (normalized.includes("deepseek-r1")) score += 720;
   else if (normalized.includes("qwen")) score += 680;
   else if (normalized.includes("llama")) score += 600;
   else if (normalized.includes("mistral")) score += 520;

@@ -5,7 +5,7 @@ import { systemDesignChecklist, systemDesignPrompts, systemDesignSteps } from ".
 import type { OllamaRecommendation, SystemDesignAnswer, SystemDesignReviewResponse } from "../shared/types";
 import "./styles.css";
 
-const MODEL_KEY = "aircode.ollamaModel.v1";
+const MODEL_KEY = "aircode.ollamaModel.v2";
 const ANSWER_KEY = "aircode.systemDesign.answer.v1";
 const CHECKS_KEY = "aircode.systemDesign.checks.v1";
 const SESSION_SECONDS = 45 * 60;
