@@ -183,27 +183,42 @@ function App(): React.ReactElement {
   const code = solutions[solutionKey] ?? getStarterCode(selectedProblem, language);
   const personalCount = personalProblems.length;
   const lastProblemId = React.useRef(selectedProblem.id);
+  const apiWasOnline = React.useRef(false);
 
-  React.useEffect(() => {
-    apiJson<Health>("/api/health")
-      .then((payload: Health) => {
-        setHealth(payload);
+  const refreshHealth = React.useCallback(async (initializeModel = false): Promise<void> => {
+    try {
+      const payload = await apiJson<Health>("/api/health");
+      setHealth(payload);
+      apiWasOnline.current = true;
+      if (initializeModel) {
         const installed = selectableModels(payload, "");
         const storedModel = localStorage.getItem(MODEL_KEY);
         const autoModel = payload.ollama.recommendation?.selectedModel || payload.ollama.defaultModel;
         setModel(storedModel && installed.includes(storedModel) ? storedModel : autoModel);
-      })
-      .catch((error) => {
-        setHealth(undefined);
+      }
+    } catch (error) {
+      setHealth(undefined);
+      if (apiWasOnline.current || initializeModel) {
         setNotice(error instanceof Error ? error.message : API_OFFLINE_MESSAGE);
-      });
+      }
+      apiWasOnline.current = false;
+    }
+  }, []);
+
+  React.useEffect(() => {
+    void refreshHealth(true);
+    const timer = window.setInterval(() => {
+      void refreshHealth();
+    }, 5000);
 
     apiJson<{ problems: Problem[] }>("/api/private-problems")
       .then((payload: { problems: Problem[] }) => {
         setPersonalProblems((current) => mergeProblems(current, payload.problems ?? []));
       })
       .catch(() => undefined);
-  }, []);
+
+    return () => window.clearInterval(timer);
+  }, [refreshHealth]);
 
   React.useEffect(() => {
     if (lastProblemId.current === selectedProblem.id) return;
