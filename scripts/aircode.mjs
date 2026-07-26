@@ -1,4 +1,4 @@
-import { existsSync } from "node:fs";
+import { existsSync, readdirSync, statSync } from "node:fs";
 import { spawn } from "node:child_process";
 import path from "node:path";
 import process from "node:process";
@@ -9,10 +9,6 @@ const children = [];
 
 function log(message) {
   console.log(`[aircode] ${message}`);
-}
-
-function command(name) {
-  return process.platform === "win32" ? `${name}.cmd` : name;
 }
 
 function spawnChild(label, commandName, args, options = {}) {
@@ -90,10 +86,39 @@ async function runCommand(label, commandName, args) {
   });
 }
 
+function newestMtime(paths) {
+  let newest = 0;
+  for (const itemPath of paths) {
+    if (!existsSync(itemPath)) continue;
+    const stats = statSync(itemPath);
+    if (stats.isDirectory()) {
+      const children = readdirSync(itemPath).map((name) => path.join(itemPath, name));
+      newest = Math.max(newest, newestMtime(children));
+    } else {
+      newest = Math.max(newest, stats.mtimeMs);
+    }
+  }
+  return newest;
+}
+
+function buildIsFresh(indexPath) {
+  if (!existsSync(indexPath)) return false;
+  const builtAt = statSync(indexPath).mtimeMs;
+  const sourceAt = newestMtime([
+    path.join(process.cwd(), "src"),
+    path.join(process.cwd(), "index.html"),
+    path.join(process.cwd(), "package.json"),
+    path.join(process.cwd(), "package-lock.json"),
+    path.join(process.cwd(), "tsconfig.json"),
+    path.join(process.cwd(), "vite.config.ts")
+  ]);
+  return builtAt >= sourceAt;
+}
+
 async function ensureBuilt() {
   const indexPath = path.join(process.cwd(), "dist", "client", "index.html");
-  if (existsSync(indexPath)) {
-    log("built app found");
+  if (buildIsFresh(indexPath)) {
+    log("built app is fresh");
     return;
   }
   const tscPath = path.join(process.cwd(), "node_modules", "typescript", "bin", "tsc");

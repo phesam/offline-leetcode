@@ -131,6 +131,10 @@ pre {
   background: rgba(2, 4, 3, 0.78);
 }
 
+.app-shell.sidebar-collapsed {
+  grid-template-columns: 52px minmax(300px, 0.85fr) minmax(440px, 1.6fr);
+}
+
 .sidebar,
 .problem-pane,
 .workspace-pane {
@@ -164,6 +168,26 @@ pre {
 
 .brand h1 {
   font-size: 18px;
+}
+
+.collapse-toggle {
+  flex: 0 0 34px;
+  min-width: 34px;
+  padding: 0;
+}
+
+.sidebar-collapsed .brand {
+  justify-content: center;
+  padding: 10px 8px;
+}
+
+.sidebar-collapsed .brand h1,
+.sidebar-collapsed .status {
+  display: none;
+}
+
+.sidebar-collapsed .sidebar-content {
+  display: none;
 }
 
 .problem-header h2 {
@@ -746,6 +770,10 @@ pre {
     grid-template-columns: 240px 1fr;
   }
 
+  .app-shell.sidebar-collapsed {
+    grid-template-columns: 52px 1fr;
+  }
+
   .workspace-pane {
     grid-column: 1 / -1;
     max-height: none;
@@ -759,6 +787,14 @@ pre {
 @media (max-width: 760px) {
   .app-shell {
     grid-template-columns: 1fr;
+  }
+
+  .app-shell.sidebar-collapsed {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar-collapsed .sidebar {
+    min-height: 52px;
   }
 
   .sidebar,

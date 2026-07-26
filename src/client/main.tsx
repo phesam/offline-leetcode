@@ -176,6 +176,7 @@ function App(): React.ReactElement {
   const [generatedTopic, setGeneratedTopic] = React.useState("arrays and hash maps");
   const [isGeneratingProblem, setIsGeneratingProblem] = React.useState(false);
   const [notice, setNotice] = React.useState("");
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = React.useState(false);
 
   const problems = React.useMemo(() => [...includedProblems, ...personalProblems], [personalProblems]);
   const selectedProblem = problems.find((problem) => problem.id === selectedId) ?? problems[0];
@@ -479,7 +480,7 @@ function App(): React.ReactElement {
         : "THINKING";
 
   return (
-    <main className="app-shell">
+    <main className={`app-shell ${isSidebarCollapsed ? "sidebar-collapsed" : ""}`}>
       <aside className="sidebar" aria-label="Problems">
         <div className="brand">
           <div>
@@ -488,66 +489,77 @@ function App(): React.ReactElement {
           <span className={health?.ollama.available ? "status online" : "status"} title={health?.ollama.host}>
             {health?.ollama.available ? "ONLINE" : "OFFLINE"}
           </span>
-        </div>
-
-        <div className="sidebar-actions">
-          <button type="button" onClick={() => setShowAddProblem((value) => !value)}>
-            PASTE LC
-          </button>
-          <button type="button" onClick={exportProblems} disabled={!personalCount}>
-            EXPORT
-          </button>
-        </div>
-
-        <div className="problem-list">
-          {problems.map((problem) => (
-            <button
-              type="button"
-              className={`problem-row ${problem.id === selectedProblem.id ? "selected" : ""}`}
-              onClick={() => {
-                setSelectedId(problem.id);
-              }}
-              key={problem.id}
-            >
-              <span>{problem.title}</span>
-              <small>
-                {problem.difficulty} / {problem.source === "personal" ? "local" : "sample"}
-              </small>
-            </button>
-          ))}
-        </div>
-
-        <div className="generate-box">
-          <label htmlFor="generate-topic">GEN</label>
-          <select
-            value={generatedDifficulty}
-            onChange={(event) => setGeneratedDifficulty(event.target.value as Problem["difficulty"])}
-            aria-label="Generated problem difficulty"
+          <button
+            type="button"
+            className="collapse-toggle"
+            onClick={() => setIsSidebarCollapsed((value) => !value)}
+            aria-label={isSidebarCollapsed ? "Expand problem sidebar" : "Collapse problem sidebar"}
+            aria-expanded={!isSidebarCollapsed}
           >
-            <option>Easy</option>
-            <option>Medium</option>
-            <option>Hard</option>
-          </select>
-          <input
-            id="generate-topic"
-            value={generatedTopic}
-            onChange={(event) => setGeneratedTopic(event.target.value)}
-            placeholder="pattern"
-          />
-          <button type="button" onClick={generateProblem} disabled={isGeneratingProblem || !health?.ollama.available}>
-            {isGeneratingProblem ? "WORKING" : "GENERATE"}
+            {isSidebarCollapsed ? ">" : "<"}
           </button>
-          {isGeneratingProblem && (
-            <div className="inline-loader" role="status" aria-live="polite">
-              <span>OLLAMA</span>
-              <span>GENERATING</span>
-              <span className="loader-dots" aria-hidden="true">
-                <i />
-                <i />
-                <i />
-              </span>
-            </div>
-          )}
+        </div>
+
+        <div className="sidebar-content" hidden={isSidebarCollapsed}>
+          <div className="sidebar-actions">
+            <button type="button" onClick={() => setShowAddProblem((value) => !value)}>
+              PASTE LC
+            </button>
+            <button type="button" onClick={exportProblems} disabled={!personalCount}>
+              EXPORT
+            </button>
+          </div>
+
+          <div className="problem-list">
+            {problems.map((problem) => (
+              <button
+                type="button"
+                className={`problem-row ${problem.id === selectedProblem.id ? "selected" : ""}`}
+                onClick={() => {
+                  setSelectedId(problem.id);
+                }}
+                key={problem.id}
+              >
+                <span>{problem.title}</span>
+                <small>
+                  {problem.difficulty} / {problem.source === "personal" ? "local" : "sample"}
+                </small>
+              </button>
+            ))}
+          </div>
+
+          <div className="generate-box">
+            <label htmlFor="generate-topic">GEN</label>
+            <select
+              value={generatedDifficulty}
+              onChange={(event) => setGeneratedDifficulty(event.target.value as Problem["difficulty"])}
+              aria-label="Generated problem difficulty"
+            >
+              <option>Easy</option>
+              <option>Medium</option>
+              <option>Hard</option>
+            </select>
+            <input
+              id="generate-topic"
+              value={generatedTopic}
+              onChange={(event) => setGeneratedTopic(event.target.value)}
+              placeholder="pattern"
+            />
+            <button type="button" onClick={generateProblem} disabled={isGeneratingProblem || !health?.ollama.available}>
+              {isGeneratingProblem ? "WORKING" : "GENERATE"}
+            </button>
+            {isGeneratingProblem && (
+              <div className="inline-loader" role="status" aria-live="polite">
+                <span>OLLAMA</span>
+                <span>GENERATING</span>
+                <span className="loader-dots" aria-hidden="true">
+                  <i />
+                  <i />
+                  <i />
+                </span>
+              </div>
+            )}
+          </div>
         </div>
 
       </aside>
