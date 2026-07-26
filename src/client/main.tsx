@@ -128,6 +128,10 @@ function isFetchFailure(error: unknown): boolean {
   return error instanceof TypeError && error.message.toLowerCase().includes("fetch");
 }
 
+function isAbortError(error: unknown): boolean {
+  return error instanceof Error && error.name === "AbortError";
+}
+
 async function apiJson<T>(path: string, init?: RequestInit): Promise<T> {
   try {
     const response = await fetch(path, init);
@@ -185,6 +189,7 @@ function App(): React.ReactElement {
   const personalCount = personalProblems.length;
   const lastProblemId = React.useRef(selectedProblem.id);
   const apiWasOnline = React.useRef(false);
+  const askAbortController = React.useRef<AbortController | null>(null);
 
   const refreshHealth = React.useCallback(async (initializeModel = false): Promise<void> => {
     try {
@@ -224,6 +229,7 @@ function App(): React.ReactElement {
   React.useEffect(() => {
     if (lastProblemId.current === selectedProblem.id) return;
     lastProblemId.current = selectedProblem.id;
+    askAbortController.current?.abort();
     setMessages([]);
     setQuestion("hint?");
     setRunResult(undefined);
@@ -303,6 +309,9 @@ function App(): React.ReactElement {
 
   async function askAi(prompt = question, resultForPrompt = runResult, displayPrompt = prompt): Promise<void> {
     if (!prompt.trim()) return;
+    askAbortController.current?.abort();
+    const controller = new AbortController();
+    askAbortController.current = controller;
     setIsAsking(true);
     setNotice("");
     const nextMessages: ChatMessage[] = [...messages, { role: "user", content: displayPrompt.trim() }];
@@ -314,6 +323,7 @@ function App(): React.ReactElement {
       const payload = await apiJson<AskResponse>("/api/ask", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        signal: controller.signal,
         body: JSON.stringify({
           model,
           language,
@@ -326,12 +336,24 @@ function App(): React.ReactElement {
       setMessages([...nextMessages, { role: "assistant", content: payload.message }]);
       if (!payload.ok) setNotice(payload.message);
     } catch (error) {
+      if (isAbortError(error)) {
+        setMessages([...nextMessages, { role: "assistant", content: "Canceled." }]);
+        setNotice("CANCELED");
+        return;
+      }
       const message = error instanceof Error ? error.message : "Could not reach the local API.";
       setMessages([...nextMessages, { role: "assistant", content: message }]);
       setNotice(message);
     } finally {
+      if (askAbortController.current === controller) askAbortController.current = null;
       setIsAsking(false);
     }
+  }
+
+  function cancelOllamaResponse(): void {
+    if (!askAbortController.current) return;
+    setNotice("CANCELING");
+    askAbortController.current.abort();
   }
 
   async function submitSolution(): Promise<void> {
@@ -813,6 +835,11 @@ function App(): React.ReactElement {
                 <i />
                 <i />
               </span>
+              {(isAsking || isSubmitting) && (
+                <button type="button" className="cancel-ollama" onClick={cancelOllamaResponse}>
+                  CANCEL
+                </button>
+              )}
             </div>
           )}
           <div className="prompt-actions">

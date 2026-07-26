@@ -22,9 +22,11 @@ interface OllamaTagsResponse {
   }>;
 }
 
-async function postOllamaChat(body: unknown, timeoutMs = OLLAMA_CHAT_TIMEOUT_MS): Promise<Response> {
+async function postOllamaChat(body: unknown, timeoutMs = OLLAMA_CHAT_TIMEOUT_MS, signal?: AbortSignal): Promise<Response> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
+  const abortFromCaller = () => controller.abort();
+  signal?.addEventListener("abort", abortFromCaller, { once: true });
   try {
     return await fetch(`${OLLAMA_HOST}/api/chat`, {
       method: "POST",
@@ -34,6 +36,7 @@ async function postOllamaChat(body: unknown, timeoutMs = OLLAMA_CHAT_TIMEOUT_MS)
     });
   } finally {
     clearTimeout(timer);
+    signal?.removeEventListener("abort", abortFromCaller);
   }
 }
 
@@ -41,7 +44,9 @@ function isAbortError(error: unknown): boolean {
   return error instanceof Error && (error.name === "AbortError" || error.message.toLowerCase().includes("aborted"));
 }
 
-function ollamaErrorMessage(error: unknown, model: string): string {
+function ollamaErrorMessage(error: unknown, model: string, canceled = false): string {
+  if (canceled) return "Ollama request canceled.";
+
   if (isAbortError(error)) {
     return `Ollama timed out after ${Math.round(OLLAMA_CHAT_TIMEOUT_MS / 1000)}s while ${model} was thinking. Try again, use a smaller model from the dropdown, or set OLLAMA_CHAT_TIMEOUT_MS higher before starting AirCode.`;
   }
@@ -154,7 +159,7 @@ function buildRecommendation(models: OllamaModelInfo[]): OllamaRecommendation {
   };
 }
 
-export async function askOllama(request: AskRequest): Promise<AskResponse> {
+export async function askOllama(request: AskRequest, signal?: AbortSignal): Promise<AskResponse> {
   let model = request.model.trim();
   if (!model) {
     try {
@@ -218,7 +223,9 @@ ${runSummary}
           { role: "user", content: userContext },
           ...request.messages
         ]
-      });
+      },
+      OLLAMA_CHAT_TIMEOUT_MS,
+      signal);
 
     if (!response.ok) {
       return {
@@ -237,7 +244,7 @@ ${runSummary}
   } catch (error) {
     return {
       ok: false,
-      message: ollamaErrorMessage(error, model),
+      message: ollamaErrorMessage(error, model, signal?.aborted),
       model
     };
   }

@@ -50,7 +50,12 @@ app.post("/api/ask", async (request, response) => {
     response.status(400).json({ ok: false, message: "Missing problem, code, language, or messages." });
     return;
   }
-  response.json(await askOllama(body));
+  const controller = new AbortController();
+  response.on("close", () => {
+    if (!response.writableEnded) controller.abort();
+  });
+  const payload = await askOllama(body, controller.signal);
+  if (!response.destroyed) response.json(payload);
 });
 
 app.post("/api/generate-problem", async (request, response) => {

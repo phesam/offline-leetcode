@@ -613,7 +613,7 @@ pre {
 
 .ollama-loader {
   display: grid;
-  grid-template-columns: 4px 1fr auto;
+  grid-template-columns: 4px 1fr auto auto;
   align-items: center;
   gap: 10px;
   min-height: 42px;
@@ -660,6 +660,19 @@ pre {
 
 .loader-dots i:nth-child(3) {
   animation-delay: 0.3s;
+}
+
+.cancel-ollama {
+  min-height: 28px;
+  color: var(--bad);
+  border-color: rgba(255, 95, 120, 0.65);
+  background: rgba(32, 3, 8, 0.9);
+}
+
+.cancel-ollama:hover:not(:disabled) {
+  border-color: var(--bad);
+  background: rgba(64, 5, 14, 0.95);
+  box-shadow: 0 0 18px rgba(255, 95, 120, 0.18);
 }
 
 .prompt-actions {
