@@ -896,7 +896,17 @@ function App(): React.ReactElement {
             )}
           </div>
           <div className="ask-row">
-            <textarea value={question} onChange={(event) => setQuestion(event.target.value)} placeholder="> ask" disabled={isAsking} />
+            <textarea
+              value={question}
+              onChange={(event) => setQuestion(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key !== "Enter" || event.shiftKey || isAsking || !question.trim()) return;
+                event.preventDefault();
+                void askAi();
+              }}
+              placeholder="> ask"
+              disabled={isAsking}
+            />
             <button type="button" onClick={() => askAi()} disabled={isAsking || !question.trim()}>
               {isAsking ? "WAIT" : "SEND"}
             </button>
