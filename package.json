@@ -1,5 +1,5 @@
 {
-  "name": "aircode-offline-practice",
+  "name": "aircode",
   "version": "0.1.0",
   "description": "Offline LeetCode-style practice with local Python/C++ runners and Ollama coaching.",
   "type": "module",
