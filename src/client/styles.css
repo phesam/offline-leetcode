@@ -441,8 +441,9 @@ pre {
   flex-direction: column;
   gap: 10px;
   padding: 10px;
+  height: 100vh;
   max-height: 100vh;
-  overflow: auto;
+  overflow: hidden;
 }
 
 .toolbar {
@@ -472,7 +473,7 @@ pre {
 
 .code-editor {
   min-height: 380px;
-  flex: 0 0 48vh;
+  flex: 0 1 42vh;
   overflow: hidden;
   border: 1px solid var(--line-hot);
   background: #010703;
@@ -527,6 +528,12 @@ pre {
   padding: 10px;
 }
 
+.results {
+  flex: 0 0 auto;
+  max-height: 170px;
+  overflow: auto;
+}
+
 .results-title {
   justify-content: space-between;
   color: var(--hot);
@@ -573,7 +580,11 @@ pre {
 
 .coach {
   display: grid;
+  grid-template-rows: auto auto auto auto minmax(280px, 1fr) auto;
   gap: 9px;
+  flex: 1 1 360px;
+  min-height: 320px;
+  overflow: hidden;
 }
 
 .coach-header {
@@ -694,9 +705,34 @@ pre {
 
 .chat-log {
   display: grid;
+  align-content: start;
   gap: 6px;
-  max-height: 230px;
+  min-height: 280px;
   overflow: auto;
+  padding-right: 6px;
+  scrollbar-color: var(--hot) #020a05;
+  overscroll-behavior: contain;
+}
+
+.chat-log::-webkit-scrollbar,
+.results::-webkit-scrollbar {
+  width: 12px;
+}
+
+.chat-log::-webkit-scrollbar-track,
+.results::-webkit-scrollbar-track {
+  background: #020a05;
+}
+
+.chat-log::-webkit-scrollbar-thumb,
+.results::-webkit-scrollbar-thumb {
+  background: var(--dim);
+  border: 2px solid #020a05;
+}
+
+.chat-log:hover::-webkit-scrollbar-thumb,
+.results:hover::-webkit-scrollbar-thumb {
+  background: var(--hot);
 }
 
 .chat-message {
@@ -721,7 +757,8 @@ pre {
 .chat-message p {
   white-space: pre-wrap;
   margin: 6px 0 0;
-  line-height: 1.45;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
 }
 
 .ask-row {

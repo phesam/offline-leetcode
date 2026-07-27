@@ -190,6 +190,7 @@ function App(): React.ReactElement {
   const lastProblemId = React.useRef(selectedProblem.id);
   const apiWasOnline = React.useRef(false);
   const askAbortController = React.useRef<AbortController | null>(null);
+  const chatLogRef = React.useRef<HTMLDivElement | null>(null);
 
   const refreshHealth = React.useCallback(async (initializeModel = false): Promise<void> => {
     try {
@@ -246,6 +247,12 @@ function App(): React.ReactElement {
   React.useEffect(() => {
     if (model) localStorage.setItem(MODEL_KEY, model);
   }, [model]);
+
+  React.useEffect(() => {
+    const chatLog = chatLogRef.current;
+    if (!chatLog) return;
+    chatLog.scrollTop = chatLog.scrollHeight;
+  }, [messages, isAsking]);
 
   function updateCode(value: string): void {
     setSolutions((current) => ({ ...current, [solutionKey]: value }));
@@ -871,7 +878,7 @@ function App(): React.ReactElement {
               WHY FAIL
             </button>
           </div>
-          <div className="chat-log">
+          <div className="chat-log" ref={chatLogRef}>
             {messages.map((message, index) => (
               <div className={`chat-message ${message.role}`} key={`${message.role}-${index}`}>
                 <strong>{message.role === "user" ? "YOU" : "AI"}</strong>
