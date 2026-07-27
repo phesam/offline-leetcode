@@ -524,6 +524,9 @@ function App(): React.ReactElement {
 
         <div className="sidebar-content" hidden={isSidebarCollapsed}>
           <div className="sidebar-actions">
+            <a className="nav-button" href="/system-design.html">
+              SYSTEM
+            </a>
             <button type="button" onClick={() => setShowAddProblem((value) => !value)}>
               PASTE LC
             </button>
