@@ -98,7 +98,7 @@ export interface AskResponse {
 export interface SystemDesignAnswer {
   promptId: string;
   promptTitle: string;
-  level: "Mid" | "Senior" | "Staff";
+  level: "Early" | "Mid" | "Senior" | "Staff";
   requirements: string;
   scale: string;
   api: string;

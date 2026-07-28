@@ -93,6 +93,17 @@ export const systemDesignSteps = [
   { key: "risks", label: "Risks", minutes: "42-45" }
 ];
 
+export const systemDesignLevelGuidance: Record<"Early" | "Mid" | "Senior" | "Staff", string> = {
+  Early:
+    "Focus on a clear product scope, simple APIs, core entities, a readable high-level diagram, and basic trade-offs. You do not need perfect distributed systems depth.",
+  Mid:
+    "Show a complete end-to-end design, reasonable scale estimates, sensible storage choices, and at least one meaningful bottleneck or failure-mode discussion.",
+  Senior:
+    "Drive trade-offs, identify bottlenecks early, justify data and scaling choices, and go deep on reliability, consistency, observability, and operational risks.",
+  Staff:
+    "Frame the problem strategically, compare multiple architectures, reason about long-term evolution, and expose hard cross-team or platform-level trade-offs."
+};
+
 export const systemDesignChecklist = [
   "Clarified scope before designing",
   "Separated functional and non-functional requirements",

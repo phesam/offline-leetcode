@@ -1,7 +1,7 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { marked } from "marked";
-import { systemDesignChecklist, systemDesignPrompts, systemDesignSteps } from "../shared/systemDesign";
+import { systemDesignChecklist, systemDesignLevelGuidance, systemDesignPrompts, systemDesignSteps } from "../shared/systemDesign";
 import type { OllamaRecommendation, SystemDesignAnswer, SystemDesignReviewResponse } from "../shared/types";
 import "./styles.css";
 
@@ -24,7 +24,7 @@ function blankAnswer(promptId = systemDesignPrompts[0].id): SystemDesignAnswer {
   return {
     promptId: prompt.id,
     promptTitle: prompt.title,
-    level: "Senior",
+    level: "Early",
     requirements: "",
     scale: "",
     api: "",
@@ -223,6 +223,7 @@ function App(): React.ReactElement {
         <label>
           Level
           <select value={answer.level} onChange={(event) => updateAnswer("level", event.target.value)}>
+            <option>Early</option>
             <option>Mid</option>
             <option>Senior</option>
             <option>Staff</option>
@@ -250,6 +251,11 @@ function App(): React.ReactElement {
             <strong>{selectedPrompt.title}</strong>
             <span>{selectedPrompt.category}</span>
             <p>{selectedPrompt.brief}</p>
+          </div>
+
+          <div className="level-card">
+            <strong>{answer.level}</strong>
+            <p>{systemDesignLevelGuidance[answer.level]}</p>
           </div>
 
           <div className="facts">

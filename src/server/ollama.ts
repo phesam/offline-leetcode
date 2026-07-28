@@ -11,6 +11,7 @@ import type {
   SystemDesignReviewRequest,
   SystemDesignReviewResponse
 } from "../shared/types";
+import { systemDesignLevelGuidance } from "../shared/systemDesign";
 
 const OLLAMA_HOST = process.env.OLLAMA_HOST ?? "http://127.0.0.1:11434";
 const FALLBACK_MODEL = "deepseek-r1:latest";
@@ -455,6 +456,7 @@ export async function reviewSystemDesignWithOllama(
   const prompt = `Review this system design interview answer.
 
 Target level: ${answer.level}
+Level expectations: ${systemDesignLevelGuidance[answer.level]}
 Prompt: ${answer.promptTitle}
 
 Candidate notes:
@@ -487,7 +489,7 @@ Return concise Markdown with:
 4. Two specific follow-up questions an interviewer would ask.
 5. One concrete next improvement.
 
-Be strict but practical. Do not claim there is one canonical design. Prefer trade-offs over buzzwords.`;
+Be strict but practical for the stated target level. For Early level, reward clear fundamentals and do not require staff-level distributed systems depth. Do not claim there is one canonical design. Prefer trade-offs over buzzwords.`;
 
   try {
     const response = await postOllamaChat(

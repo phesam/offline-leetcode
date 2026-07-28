@@ -171,17 +171,36 @@ label {
   border-bottom: 1px solid var(--line);
 }
 
+.level-card {
+  display: grid;
+  gap: 6px;
+  margin-top: 12px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  background: #020a05;
+}
+
 .prompt-card strong {
   color: var(--hot);
   font-size: 18px;
 }
 
+.level-card strong {
+  color: var(--hot);
+}
+
 .prompt-card span,
 .prompt-card p,
+.level-card p,
 .facts p,
 .checklist label,
 .review {
   color: var(--muted);
+}
+
+.level-card p {
+  margin: 0;
+  line-height: 1.45;
 }
 
 .facts {
