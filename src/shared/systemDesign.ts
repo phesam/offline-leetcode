@@ -11,75 +11,93 @@ export interface SystemDesignPrompt {
 export const systemDesignPrompts: SystemDesignPrompt[] = [
   {
     id: "realtime-chat",
-    title: "Realtime Chat",
+    title: "Basic Chat App",
     category: "Messaging",
-    brief: "Design a chat product for one-to-one and small-group conversations across web and mobile clients.",
-    functional: ["send and receive messages", "show online/offline state", "load conversation history", "support push notifications"],
-    constraints: ["low message latency", "mobile clients reconnect often", "users expect messages not to disappear"],
-    deepDiveIdeas: ["websocket fanout", "message ordering", "offline delivery", "hot group conversations"]
+    brief: "Design a simple one-to-one chat app for web and mobile users.",
+    functional: ["send messages", "load conversation history", "mark messages as read", "show basic online state"],
+    constraints: ["messages should not be lost", "recent chats should load quickly", "clients may disconnect and reconnect"],
+    deepDiveIdeas: ["message table schema", "polling vs websocket", "read receipts", "basic retry behavior"]
   },
   {
-    id: "video-feed",
-    title: "Short Video Feed",
-    category: "Feed",
-    brief: "Design a personalized short-video feed with uploads, playback, ranking, and moderation hooks.",
-    functional: ["upload videos", "transcode media", "serve feed", "track watch events", "remove unsafe content"],
-    constraints: ["read-heavy traffic", "large media files", "ranking changes frequently"],
-    deepDiveIdeas: ["media pipeline", "feed ranking", "CDN strategy", "event ingestion"]
+    id: "task-tracker",
+    title: "Task Tracker",
+    category: "CRUD",
+    brief: "Design a task tracker for small teams to create, assign, update, and filter tasks.",
+    functional: ["create tasks", "assign owners", "change status", "comment on tasks", "filter by project or owner"],
+    constraints: ["simple permissions", "fast list views", "clear update history"],
+    deepDiveIdeas: ["task and comment schema", "indexes for filters", "activity log", "basic permission checks"]
   },
   {
     id: "url-shortener",
     title: "URL Shortener",
-    category: "Core Infra",
-    brief: "Design a URL shortener that creates short links and redirects users quickly.",
+    category: "Backend",
+    brief: "Design a URL shortener that creates short links and redirects users to the original URL.",
     functional: ["create short links", "redirect short links", "expire links", "track click analytics"],
-    constraints: ["redirects must be fast", "read volume greatly exceeds write volume", "links should be hard to guess"],
-    deepDiveIdeas: ["ID generation", "cache strategy", "analytics pipeline", "abuse prevention"]
+    constraints: ["redirects should be fast", "reads are higher than writes", "short codes should avoid collisions"],
+    deepDiveIdeas: ["short code generation", "link table schema", "cache for redirects", "basic click counters"]
   },
   {
     id: "notification-system",
-    title: "Notification System",
-    category: "Platform",
-    brief: "Design a platform that sends email, SMS, push, and in-app notifications for many product teams.",
-    functional: ["accept notification requests", "route by channel", "respect user preferences", "retry failed sends"],
-    constraints: ["third-party providers fail", "some messages are urgent", "users can opt out"],
-    deepDiveIdeas: ["queue design", "rate limiting", "deduplication", "provider failover"]
+    title: "User Notifications",
+    category: "Backend",
+    brief: "Design a simple notification service for sending email and in-app notifications.",
+    functional: ["create notification requests", "send email", "store in-app notifications", "mark notifications as read"],
+    constraints: ["email providers can fail", "users may disable some notifications", "duplicate sends are annoying"],
+    deepDiveIdeas: ["queue and worker", "notification schema", "user preferences", "retry and deduplication"]
   },
   {
-    id: "collaborative-docs",
-    title: "Collaborative Documents",
-    category: "Collaboration",
-    brief: "Design a document editor where multiple users can edit the same document at the same time.",
-    functional: ["edit documents", "see collaborators", "sync changes", "view revision history"],
-    constraints: ["conflicting edits happen constantly", "latency must feel low", "documents can be very large"],
-    deepDiveIdeas: ["conflict resolution", "presence", "snapshotting", "permission checks"]
+    id: "photo-sharing",
+    title: "Photo Sharing App",
+    category: "Media",
+    brief: "Design a photo sharing app where users upload photos, view profiles, and like photos.",
+    functional: ["upload photos", "view user profiles", "show photo feed", "like photos", "delete own photos"],
+    constraints: ["images can be large", "feeds should load quickly", "uploads may fail on mobile networks"],
+    deepDiveIdeas: ["object storage", "image metadata schema", "thumbnail generation", "feed pagination"]
   },
   {
-    id: "metrics-dashboard",
-    title: "Metrics Dashboard",
-    category: "Analytics",
-    brief: "Design a dashboard for product teams to query time-series metrics and create alerting views.",
-    functional: ["ingest events", "aggregate metrics", "query dashboards", "trigger alerts"],
-    constraints: ["writes are high-volume", "queries need recent data", "old data can be downsampled"],
-    deepDiveIdeas: ["stream processing", "time-series storage", "rollups", "alert correctness"]
-  },
-  {
-    id: "ride-matching",
-    title: "Ride Matching",
-    category: "Marketplace",
-    brief: "Design a ride-hailing matcher that pairs riders with nearby drivers.",
-    functional: ["track driver location", "request rides", "match nearby drivers", "handle trip state"],
-    constraints: ["location changes every few seconds", "matching must be fast", "drivers can reject rides"],
-    deepDiveIdeas: ["geospatial indexing", "matching flow", "surge traffic", "state transitions"]
-  },
-  {
-    id: "file-sync",
-    title: "File Sync",
+    id: "file-upload",
+    title: "File Upload and Sharing",
     category: "Storage",
-    brief: "Design a desktop and mobile file sync product with sharing and version history.",
-    functional: ["upload files", "sync file changes", "share folders", "restore previous versions"],
-    constraints: ["files can be huge", "clients go offline", "conflicts need resolution"],
-    deepDiveIdeas: ["chunking", "metadata storage", "delta sync", "conflict handling"]
+    brief: "Design a file upload service where users can upload files and share download links.",
+    functional: ["upload files", "download files", "share files by link", "delete files", "show upload progress"],
+    constraints: ["files can be large", "downloads should be reliable", "shared links need access control"],
+    deepDiveIdeas: ["metadata database", "blob/object storage", "signed URLs", "chunked upload"]
+  },
+  {
+    id: "event-rsvp",
+    title: "Event RSVP",
+    category: "Product",
+    brief: "Design an event RSVP system where organizers create events and guests respond.",
+    functional: ["create events", "invite guests", "RSVP yes/no/maybe", "show attendee list", "send reminders"],
+    constraints: ["guest lists can change", "organizers need accurate counts", "reminders should not spam users"],
+    deepDiveIdeas: ["event and RSVP schema", "invitation tokens", "capacity limits", "reminder scheduling"]
+  },
+  {
+    id: "api-rate-limiter",
+    title: "API Rate Limiter",
+    category: "Infrastructure",
+    brief: "Design a rate limiter that protects an API from too many requests per user or API key.",
+    functional: ["count requests", "block requests over a limit", "support per-user limits", "return retry information"],
+    constraints: ["checks must be fast", "limits reset over time", "multiple app servers may receive traffic"],
+    deepDiveIdeas: ["fixed window vs sliding window", "Redis counters", "where to enforce limits", "failure behavior"]
+  },
+  {
+    id: "search-autocomplete",
+    title: "Search Autocomplete",
+    category: "Search",
+    brief: "Design autocomplete suggestions for a product search box.",
+    functional: ["accept typed prefixes", "return suggestions", "rank popular results", "update suggestions from new products"],
+    constraints: ["responses should feel instant", "popular queries change", "prefixes can be very common"],
+    deepDiveIdeas: ["prefix index", "cache hot prefixes", "ranking by popularity", "batch index updates"]
+  },
+  {
+    id: "shopping-cart",
+    title: "Shopping Cart",
+    category: "Commerce",
+    brief: "Design a shopping cart for an online store.",
+    functional: ["add items", "remove items", "update quantities", "persist cart across sessions", "start checkout"],
+    constraints: ["prices can change", "inventory may run out", "anonymous users can have carts"],
+    deepDiveIdeas: ["cart schema", "session vs user carts", "inventory checks", "price snapshot trade-offs"]
   }
 ];
 
@@ -107,10 +125,10 @@ export const systemDesignLevelGuidance: Record<"Early" | "Mid" | "Senior" | "Sta
 export const systemDesignChecklist = [
   "Clarified scope before designing",
   "Separated functional and non-functional requirements",
-  "Estimated traffic, storage, and read/write shape",
+  "Made a simple traffic, storage, or read/write estimate",
   "Defined core APIs with request/response shape",
   "Named primary entities and indexes",
   "Explained data flow through major components",
-  "Picked at least two deep dives",
+  "Picked one or two focused deep dives",
   "Discussed bottlenecks, failure modes, and trade-offs"
 ];

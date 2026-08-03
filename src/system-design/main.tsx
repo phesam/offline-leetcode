@@ -112,6 +112,11 @@ function App(): React.ReactElement {
   }, [model]);
 
   React.useEffect(() => {
+    if (systemDesignPrompts.some((prompt) => prompt.id === answer.promptId)) return;
+    setAnswer((current) => ({ ...blankAnswer(), level: current.level }));
+  }, [answer.promptId]);
+
+  React.useEffect(() => {
     if (!timerRunning) return undefined;
     const timer = window.setInterval(() => {
       setSecondsLeft((current) => {
